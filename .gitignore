@@ -3,6 +3,10 @@ straight/
 # 如果你有 elpa 文件夹，也忽略
 elpa/
 eln-cache/
+history
+recentf
+saveplace
+
 
 # 忽略 Emacs 自动生成的备份文件（比如结尾带 ~ 的文件）
 *~
