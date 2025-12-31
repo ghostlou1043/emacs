@@ -2,9 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
-;; (require  'core-save)
-;; (require  'core-save)
-
+(require 'core-save)
+(require 'core-revert)
+(require 'core-recentf)
 
 
 (provide 'init-core)
