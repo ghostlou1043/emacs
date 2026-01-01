@@ -2,13 +2,14 @@
 ;;; Commentary:
 ;;; Code:
 
-
+;; Version Check.
 (let ((minver "27.1"))
   (when (version< emacs-version minver)
     (error "Your Emacs is too old -- this config requires v%s or higher" minver)))
 (when (version< emacs-version "28.1")
   (message "Your Emacs is old, and some functionality in this config will be disabled. Please upgrade if possible."))
 
+;; Add load-path.
 (defun update-load-path (&optional dirs)
   "Add a list of directories to the top of `load-path`.
 If DIRS is provided, it should be a list of strings.
@@ -23,13 +24,29 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 (update-load-path '("lisp" "os-lisp" "site-lisp" "lisp/core"))
 
-
+;; Personalized customization.
 (require 'init-1043)
+(require 'init-lou)
+(require 'init-ghost)
+
+;; Network Proxy
+(setq lou/http-proxy-url "127.0.0.1")
+(setq lou/http-proxy-port "7897")
+
+(setq lou/https-proxy-url "127.0.0.1")
+(setq lou/https-proxy-port "7897")
+
+(setq lou/socks-proxy-url "127.0.0.1")
+(setq lou/socks-proxy-port "7897")
+(setq lou/socks-proxy-version "5")
+
+;; Select Module
 (setq 1043/completion-backend 'none)
 (setq 1043/file-manager 'dired)
 
-
+;; Load built-in features and core configuration.
 (require 'init-core)
+
 
 
 

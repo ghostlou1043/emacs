@@ -1,8 +1,9 @@
-# 忽略 straight.el 下载的所有包和构建产物
-straight/
-# 如果你有 elpa 文件夹，也忽略
+
+autosave/
 elpa/
 eln-cache/
+straight/
+
 history
 recentf
 saveplace
