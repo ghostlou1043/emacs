@@ -7,7 +7,7 @@
 ;; search strings, and other prompts, to a file. This allows users to retain
 ;; their minibuffer history across Emacs restarts.
 (use-package savehist
-  :straight nil
+  :ensure nil
   :commands (savehist-mode savehist-save)
   :hook
   (after-init . savehist-mode)
@@ -23,7 +23,7 @@
 ;; upon reopening. This feature is particularly beneficial for resuming work at
 ;; the precise point where you previously left off.
 (use-package saveplace
-  :straight nil
+  :ensure nil
   :commands (save-place-mode save-place-local-mode)
   :hook
   (after-init . save-place-mode)

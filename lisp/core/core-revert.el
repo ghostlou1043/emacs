@@ -6,7 +6,7 @@
 ;; contents of a buffer to reflect changes made to the underlying file
 ;; on disk.
 (use-package autorevert
-  :straight nil
+  :ensure nil
   :commands (auto-revert-mode global-auto-revert-mode)
   :hook
   (after-init . global-auto-revert-mode)

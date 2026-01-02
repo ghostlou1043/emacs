@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(setq use-package-always-ensure nil)
+;; (setq use-package-always-ensure nil)
 
 
 

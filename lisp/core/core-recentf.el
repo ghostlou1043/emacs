@@ -6,7 +6,7 @@
 ;; accessed files, making it easier to reopen files you have worked on
 ;; recently.
 (use-package recentf
-  :straight nil
+  :ensure nil
   :commands (recentf-mode recentf-cleanup)
   :hook
   (after-init . recentf-mode)

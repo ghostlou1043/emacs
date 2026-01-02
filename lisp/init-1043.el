@@ -6,7 +6,7 @@
       user-mail-address "ghostlou1043@gmail.com"
       auth-sources '("~/.authinfo.gpg"))
 
-;; Choose completion backend.
+;; Select Completion Backend.
 (defvar 1043/completion-backend 'none
   "The master switch for completion backend.
    Options: 'lsp-bridge, 'lsp-proxy, 'lsp-mode, 'eglot, 'none")
@@ -35,18 +35,45 @@
       (eq 1043/completion-backend 'lsp-mode)
       (eq 1043/completion-backend 'lsp-proxy)))
 
-;; Choose file-manager
+;; Select File Manager
 (defvar 1043/file-manager 'dired
-  "The master switch for file-manager.
+  "The master switch for file manager.
    Options: 'dirvish, 'dired")
 
 (defun 1043/enable-drivish-p ()
   "Returns t if drivish is the selected file manager."
-  (eq 1043/completion-backend 'dirvish))
+  (eq 1043/file-manager 'dirvish))
 
 (defun 1043/enable-dired-p ()
   "Returns t if dired is the selected file manager."
-  (eq 1043/completion-backend 'dired))
+  (eq 1043/file-manager 'dired))
+
+;; Select Input Method
+(defvar 1043/input-method 'rime
+  "The master switch for input method.
+   Options: 'rime, 'pyim")
+
+(defun 1043/enable-rime-p ()
+  "Returns t if drivish is the selected file manager."
+  (eq 1043/input-method 'rime))
+
+(defun 1043/enable-pyim-p ()
+  "Returns t if dired is the selected file manager."
+  (eq 1043/input-method 'pyim))
+
+;; Project Management
+(defvar 1043/project-management 'project
+  "The master switch for project management.
+   Options: 'project, 'projectile")
+
+(defun 1043/enable-project-p ()
+  "Returns t if drivish is the selected file manager."
+  (eq 1043/project-management 'project))
+
+(defun 1043/enable-projectile-p ()
+  "Returns t if dired is the selected file manager."
+  (eq 1043/project-management 'projectile))
+
 
 ;; File
 (defun 1043/directory-empty-p (directory)
