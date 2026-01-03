@@ -4,15 +4,25 @@
 
 
 ;; 激活 Emacs 的 GUI 相关插件包
-;; (defun sys/active-nixos-gui (&optional frame)
-;;   (let ((current-frame (or frame (selected-frame))))
-;;     (when (sys/nixos-gui-p current-frame)
-;;         (fontaine-mode +1))))
-;; (add-hook 'server-after-make-frame-hook #'sys/active-nixos-gui)
-;; 
-;; (unless (daemonp) ; 检查当前 Emacs 实例是否是 daemon 如果不是则执行函数
-;;   (sys/active-nixos-gui))
+(defun sys/active-nixos-gui (&optional frame)
+  (let ((current-frame (or frame (selected-frame))))
+    (when (sys/nixos-gui-p current-frame)
+      (fontaine-mode +1))))
 
+(add-hook 'server-after-make-frame-hook #'sys/active-nixos-gui)
+
+(unless (or (daemonp) (not (display-graphic-p)))
+  (if (boundp 'elpaca-after-init-hook)
+    (add-hook 'elpaca-after-init-hook #'sys/active-nixos-gui)
+    (add-hook 'after-init-hook #'sys/active-nixos-gui)))
+  
+
+;; elpaca-after-init-hook
+;; (if (boundp 'elpaca-after-init-hook)
+;;     ;; 场景 A: Elpaca 存在，挂载到 Elpaca 完成后的钩子上
+;;     (add-hook 'elpaca-after-init-hook #'my/load-custom-file)
+;;   ;; 场景 B: Elpaca 不存在，挂载到标准的 Emacs 启动钩子上
+;;   (add-hook 'after-init-hook #'my/load-custom-file))
 
 (provide 'active-nixos-gui)
 

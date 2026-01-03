@@ -5,6 +5,10 @@
 (require 'core-save)
 (require 'core-revert)
 (require 'core-recentf)
+(require 'core-themes)
+
+
+
 
 
 (provide 'init-core)

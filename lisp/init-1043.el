@@ -6,6 +6,42 @@
       user-mail-address "ghostlou1043@gmail.com"
       auth-sources '("~/.authinfo.gpg"))
 
+;; Select System Scale.
+;; https://mydevice.alsacreations.com/
+;; window.devicePixelRatio
+(defvar 1043/system-scale '100
+  "The master switch for system-scale
+   Options: '100, '125, '150, '175, '200")
+
+(defun 1043/system-scale-100-p ()
+  (eq 1043/system-scale '100))
+
+(defun 1043/system-scale-125-p ()
+  (eq 1043/system-scale '125))
+
+(defun 1043/system-scale-150-p ()
+  (eq 1043/system-scale '150))
+
+(defun 1043/system-scale-175-p ()
+  (eq 1043/system-scale '175))
+
+(defun 1043/system-scale-200-p ()
+  (eq 1043/system-scale '200))
+
+;; Select Theme.
+(defvar 1043/themes 'built-in
+  "The master switch for themes.
+   Options: 'modus-themes, 'built-in")
+
+(defun 1043/enable-built-in-themes-p ()
+  "Returns t if built-in is the selected theme."
+  (eq 1043/themes 'built-in))
+
+(defun 1043/enable-modus-themes-p ()
+  "Returns t if modus-themes is the selected theme."
+  (eq 1043/themes 'modus-themes))
+
+
 ;; Select Completion Backend.
 (defvar 1043/completion-backend 'none
   "The master switch for completion backend.
@@ -35,7 +71,7 @@
       (eq 1043/completion-backend 'lsp-mode)
       (eq 1043/completion-backend 'lsp-proxy)))
 
-;; Select File Manager
+;; Select File Manager.
 (defvar 1043/file-manager 'dired
   "The master switch for file manager.
    Options: 'dirvish, 'dired")
@@ -48,7 +84,7 @@
   "Returns t if dired is the selected file manager."
   (eq 1043/file-manager 'dired))
 
-;; Select Input Method
+;; Select Input Method.
 (defvar 1043/input-method 'rime
   "The master switch for input method.
    Options: 'rime, 'pyim")
@@ -61,7 +97,7 @@
   "Returns t if dired is the selected file manager."
   (eq 1043/input-method 'pyim))
 
-;; Project Management
+;; Project Management.
 (defvar 1043/project-management 'project
   "The master switch for project management.
    Options: 'project, 'projectile")
@@ -75,7 +111,7 @@
   (eq 1043/project-management 'projectile))
 
 
-;; File
+;; File.
 (defun 1043/directory-empty-p (directory)
   "Check if DIRECTORY is empty or contains only .DS_Store."
   (cond

@@ -4,13 +4,13 @@
 
 ;; gui文件夹里放gui相关插件，但是，init-nixos-gui.el是最后才require的
 
-;; xxxx plugin
+(require 'nixos-env)
+
+
+
+
 
 (require 'init-nixos-gui)
-;; 
-;; 
-;; 
-;; 
 (require 'active-nixos-gui)
 ;; 
 ;; (when sys/nixosp

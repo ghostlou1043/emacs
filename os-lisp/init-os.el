@@ -29,21 +29,25 @@
 ;; 第二层：图形界面判断 (使用 defun，因为 Daemon 模式下状态可能变化)
 ;; -----------------------------------------------------------------------------
 
-(defun sys/nixos-gui-p ()
+(defun sys/nixos-gui-p (&optional frame)
   "判定当前是否在 NixOS 的图形界面下。"
-  (and (display-graphic-p) sys/nixosp))
+  (and (display-graphic-p frame)      
+       (bound-and-true-p sys/nixosp)))
 
-(defun sys/linux-gui-p ()
+(defun sys/linux-gui-p (&optional frame)
   "判定当前是否在常规 Linux 的图形界面下。"
-  (and (display-graphic-p) sys/linuxp))
+  (and (display-graphic-p frame)
+       (bound-and-true-p sys/linuxp)))
 
-(defun sys/mac-gui-p ()
+(defun sys/mac-gui-p (&optional frame)
   "判定当前是否在 macOS 的图形界面下。"
-  (and (display-graphic-p) sys/macp))
+  (and (display-graphic-p frame)
+       (bound-and-true-p sys/macp)))
 
-(defun sys/win-gui-p ()
+(defun sys/win-gui-p (&optional frame)
   "判定当前是否在 Windows 的图形界面下。"
-  (and (display-graphic-p) sys/winp))
+  (and (display-graphic-p frame)
+       (bound-and-true-p sys/winp)))
 
 (when sys/nixosp
   (update-load-path '("os-lisp/nixos" "os-lisp/nixos/nixos-gui"))
