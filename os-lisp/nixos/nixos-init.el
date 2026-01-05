@@ -5,7 +5,8 @@
 ;; gui文件夹里放gui相关插件，但是，init-nixos-gui.el是最后才require的
 
 (require 'nixos-env)
-
+(require 'nixos-utils)
+(require 'nixos-pass)
 
 
 

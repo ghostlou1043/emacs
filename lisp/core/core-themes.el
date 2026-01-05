@@ -111,9 +111,7 @@
            :tab-width 0           
            :right-divider-width 1
            :scroll-bar-width 16
-           :fringe-width 8
-           ))
-
+           :fringe-width 8))
   (setq spacious-padding-subtle-frame-lines
       '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive))
   (spacious-padding-mode +1))

@@ -8,6 +8,8 @@
 (require 'core-recentf)
 
 (require 'core-themes)
+(require 'core-visual)
+(require 'core-utils)
 
 
 

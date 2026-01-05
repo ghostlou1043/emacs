@@ -49,6 +49,19 @@
   (and (display-graphic-p frame)
        (bound-and-true-p sys/winp)))
 
+(defun sys/wayland-p ()
+  "判断当前是否运行在 Wayland 环境下。
+如果是 Wayland 返回 t，否则返回 nil。"
+  (and (getenv "WAYLAND_DISPLAY") t))
+
+(defun sys/x11-p ()
+  "判断当前是否运行在 X11 环境下。
+如果是 X11 返回 t，否则返回 nil。"
+  ;; 这里的逻辑是：如果有 DISPLAY 变量，且没有 WAYLAND_DISPLAY 变量，通常就是 X11
+  (and (getenv "DISPLAY")
+       (not (getenv "WAYLAND_DISPLAY"))))
+
+
 (when sys/nixosp
   (update-load-path '("os-lisp/nixos" "os-lisp/nixos/nixos-gui"))
   (require 'nixos-init))
