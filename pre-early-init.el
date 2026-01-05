@@ -7,9 +7,7 @@
 (setq minimal-emacs-ui-features '())
 (setq minimal-emacs-debug t) ;; 
 (setq minimal-emacs-optimize-startup-gc t)
-(setq minimal-emacs-gc-cons-threshold (* 128 1024 1024))
-(setq minimal-emacs-gc-cons-percentage gc-cons-percentage)
-(setq minimal-emacs-gc-cons-threshold-restore-delay nil)
+(setq minimal-emacs-gc-cons-threshold-restore-delay nil) ;; 交给 GCMH
 (setq minimal-emacs-optimize-file-name-handler-alist t)
 (setq minimal-emacs-disable-mode-line-during-startup t)
 ;; 使用 straight+use-package

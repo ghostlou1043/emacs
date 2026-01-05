@@ -126,6 +126,53 @@
                                   2))) 
       (null (delete ".DS_Store" files))))))
 
+;; Fonts.
+(require 'seq)
+
+(defvar 1043/font-family-list nil
+  "Cache font family list to avoid repeated calls.")
+
+(defun 1043/set-font-family-list ()
+  "Initialize cached font family list."
+  (setq 1043/font-family-list (font-family-list)))  
+
+(defun 1043/set-font-if-exists (script font-family)
+  "If FONT-FAMILY exists, set it for SCRIPT."
+  (when (member font-family 1043/font-family-list)
+    (set-fontset-font t script (font-spec :family font-family))))
+
+(defun 1043/get-emoji-rescale ()
+  "Return a suitable emoji rescale factor based on current default font height."
+  (let ((height (face-attribute 'default :height)))
+    (cond
+     ((<= height 105) 0.82) ;; s ok 14 11 3
+     ((<= height 120) 0.82) ;; s ok 16 13 3
+     ((<= height 150) 0.82) ;; r ok 20 16 4
+     ((<= height 180) 0.82) ;; h ok 24 19 5
+     ((<= height 195) 0.82) ;; t ok 26 21 5
+     ((<= height 225) 0.82) ;; p ok 30 24 6
+     ((<= height 241) 0.82) ;; p ok 32 26 6
+     (t               0.82))))
+
+(defun 1043/update-emoji-rescale ()
+  "Update emoji font rescale according to current default font height."
+    (when (member "Noto Color Emoji" 1043/font-family-list)
+      (setq face-font-rescale-alist
+            (seq-remove (lambda (entry)
+                          (let ((font-pattern (car entry)))
+                            (and (fontp font-pattern)
+                                 (string-equal (font-get font-pattern :family) "Noto Color Emoji"))))
+                        face-font-rescale-alist)))
+    (add-to-list 'face-font-rescale-alist
+                 (cons (font-spec :family "Noto Color Emoji") (1043/get-emoji-rescale))
+                 t))
+
+(defun 1043/redraw-emoji-mono () ;; fontaine-set-preset-hook
+  (interactive)
+  (1043/get-emoji-rescale)
+  (1043/update-emoji-rescale)
+  (clear-face-cache t) ;; 其实nil也行
+  (redraw-frame))
 
 (provide 'init-1043)
 

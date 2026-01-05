@@ -24,12 +24,14 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 (update-load-path '("lisp" "os-lisp" "site-lisp" "lisp/core"))
 
+
+
 ;; Personalized customization.
 (require 'init-1043)
 (require 'init-lou)
 (require 'init-ghost)
 
-;; Network Proxy
+;; Network Proxy.
 (setq lou/http-proxy-url "127.0.0.1")
 (setq lou/http-proxy-port "7897")
 
@@ -40,25 +42,120 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (setq lou/socks-proxy-port "7897")
 (setq lou/socks-proxy-version "5")
 
-;; Select Module
+;; Select Module.
 (setq 1043/completion-backend 'none)
 (setq 1043/file-manager 'dired)
+(setq 1043/themes 'modus-themes)
 
 ;; Load built-in features and core configuration.
 (require 'init-core)
 
+;; (require 'init-emacs)
+;; (require 'init-misc)
 
+;; ;; 主题
+;; (require 'init-themes)
+;; ;; 字体
+;; (require 'init-font)
 
+;; ;; 保存
+;; (require 'init-save)
+;; 
+;; ;; 编辑
+;; (require 'init-edit)
+;; (require 'init-meow)
+;; 
+;; ;; 密码
+;; (require 'init-pass)
+;; 
+;; ;; ;; 文件管理
+;; (unless kaladin/drivish
+;;   (require 'init-dired))
+;; 
+;; (when kaladin/drivish
+;;   (require 'init-drivish))
+;; 
+;; ;; ;; 布局
+;; (require 'init-windows)
+;; (require 'init-dashboard)
+;; 
+;; ;; 输入法
+;; (require 'init-input)
+;; ;; 中文
+;; (when sys/macp
+;;   (require 'init-cn))
+;; ;; 英文
+;; (require 'init-en)
+;; 
+;; ;; GIT
+;; (require 'init-magit)
+;; ;; 阅读
+;; (require 'init-read)
+;; ;; Game
+;; (require 'init-2048)
+;; ;; 终端
+;; (require 'init-shell)
 
+;; ;; APP
+;; 
+;; (require 'init-eaf)
+;; (require 'init-paw)
+;; 
+;; (require 'init-telega)
+;; (require 'init-elfeed)
+;; 
+;; (require 'init-treemacs)
+;; 
+;; ;; GPT
+;; (require 'init-gpt)
+;; 
+;; ;; 补全
+;; (require 'init-vertico)
 
+;; 项目管理
+;;(require 'init-project)
+
+;; 语言
+;; (require 'init-language)
+;; (require 'init-nix)
+;; (require 'init-lua)
+;; (require 'init-kdl)
+;; (require 'init-yaml)
+;; (require 'init-json)
+;; (require 'init-elisp)
+;; (require 'init-cmake)
+;; (require 'init-markdown)
+
+;;(require 'init-go)
+;;(require 'init-python)
+
+;;(require 'init-rust)
+
+;; 笔记
+;;(require 'init-org)
+;;(require 'init-denote)
+
+;; 各种 APP
+;;(require 'init-hackernews)
 
 (require 'init-os)
 
 
+;; Server Start.
+
+(unless (daemonp)
+  (require 'server)
+  (unless (server-running-p)
+    (if (boundp 'elpaca-after-init-hook)
+        (add-hook 'elpaca-after-init-hook #'server-start)
+    (add-hook 'after-init-hook #'server-start))))
 
 
-;; 待观察 远程连接时肯定要设置为不自动刷新
-;; (setq global-auto-revert-non-file-buffers t)
+
+
+
+
+         
 
 ;; word-wrap t： 启用单词换行，即在空白处换行而不是单词中间。
 ;; truncate-lines t： 默认启用行截断（不自动换行）。这与 word-wrap t 结合使用，意味着如果一行太长，它会被截断，但如果你手动启用 visual-line-mode，它会在单词边界换行。

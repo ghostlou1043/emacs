@@ -2,10 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+(require 'core-gcmh)
 (require 'core-save)
 (require 'core-revert)
 (require 'core-recentf)
+
 (require 'core-themes)
+
 
 
 

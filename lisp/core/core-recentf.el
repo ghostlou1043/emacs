@@ -10,17 +10,48 @@
   :commands (recentf-mode recentf-cleanup)
   :hook
   (after-init . recentf-mode)
-
   :custom
+  (recentf-max-saved-items 300)
+  (recentf-max-menu-items 15)
   (recentf-auto-cleanup (if (daemonp) 300 'never))
   (recentf-exclude
-   (list "\\.tar$" "\\.tbz2$" "\\.tbz$" "\\.tgz$" "\\.bz2$"
-         "\\.bz$" "\\.gz$" "\\.gzip$" "\\.xz$" "\\.zip$"
-         "\\.7z$" "\\.rar$"
-         "COMMIT_EDITMSG\\'"
-         "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"
-         "-autoloads\\.el$" "autoload\\.el$"))
+   (list "\\.tar$" "\\.tbz2$" "\\.tbz$" "\\.tgz$" 
+         "\\.bz2$" "\\.bz$" "\\.gz$" "\\.gzip$" 
+         "\\.xz$" "\\.zip$" "\\.7z$" "\\.rar$"
 
+         "^/tmp/"
+         "^/var/folders/.+$"         
+         "^/usr/include/"
+
+         "/ssh:"  
+         "/sudo:" 
+         
+         ".cask"
+         "url"
+
+         "\\.?cache"         
+         "/.elfeed/"
+
+         "/TAGS\\'"
+         "/G?TAGS$"         
+         "savehist"
+         "bookmarks"         
+         "saveplaces"
+         "undo-tree-hist"
+         
+         "\\.revive$"
+         "persp-confs"
+         "/persp-confs/"
+         "\\.?ido\\.last$"
+         
+         "autoload\\.el$"
+         "-autoloads\\.el$"
+         "\\(?:\\.emacs\\.d\\|emacs\\)/\\(?:elpa\\|straight\\|elpaca\\)"
+         
+         "COMMIT_EDITMSG\\'"
+         
+         "\\.\\(?:pdf\\|docx?\\|xlsx?\\)$"
+         "\\.\\(?:gif\\|svg\\|png\\|jpe?g\\|bmp\\|xpm\\)$"))
   :config
   ;; A cleanup depth of -90 ensures that `recentf-cleanup' runs before
   ;; `recentf-save-list', allowing stale entries to be removed before the list

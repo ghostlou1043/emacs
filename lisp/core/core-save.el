@@ -12,12 +12,19 @@
   :hook
   (after-init . savehist-mode)
   :custom
+  (history-length 300)
+  (savehist-save-minibuffer-history t)
   (savehist-autosave-interval 600)
   (savehist-additional-variables
    '(kill-ring                        ; clipboard
      register-alist                   ; macros
+     compile-command                  ; 编译命令历史     
+     file-name-history                ; 文件名历史
+     minibuffer-history               ; minibuffer 历史
+     query-replace-history            ; 查找替换历史
+     shell-command-history            ; shell 命令历史          
      mark-ring global-mark-ring       ; marks
-     search-ring regexp-search-ring)))
+     search-ring regexp-search-ring))); 搜索记录
 
 ;; save-place-mode enables Emacs to remember the last location within a file
 ;; upon reopening. This feature is particularly beneficial for resuming work at
@@ -28,7 +35,7 @@
   :hook
   (after-init . save-place-mode)
   :custom
-  (save-place-limit 400))
+  (save-place-limit 600))
 
 (provide 'core-save)
 

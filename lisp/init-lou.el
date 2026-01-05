@@ -146,7 +146,11 @@
   (interactive)
   (lou/save-buffer-as-utf8 'gbk))
 
-;;
+;; Fonts
+(defun lou/switch-to-proportional-font ()
+  (interactive)
+  (variable-pitch-mode 1)
+  (text-scale-increase 1))
 
 
 (provide 'init-lou)

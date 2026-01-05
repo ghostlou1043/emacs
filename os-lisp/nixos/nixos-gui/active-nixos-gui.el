@@ -7,7 +7,7 @@
 (defun sys/active-nixos-gui (&optional frame)
   (let ((current-frame (or frame (selected-frame))))
     (when (sys/nixos-gui-p current-frame)
-      (fontaine-mode +1))))
+      (sys/set-fonts))))
 
 (add-hook 'server-after-make-frame-hook #'sys/active-nixos-gui)
 
