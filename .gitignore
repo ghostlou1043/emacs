@@ -1,14 +1,21 @@
 
+.cache/
+
 autosave/
 elpa/
 elpaca/
 eln-cache/
+
 straight/
+undo-fu-session/
+rime/
 
 history
 recentf
 saveplace
+fontaine-latest-state.eld
 
+!rime/default.custom.yaml
 
 # 忽略 Emacs 自动生成的备份文件（比如结尾带 ~ 的文件）
 *~

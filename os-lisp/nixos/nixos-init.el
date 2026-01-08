@@ -7,6 +7,7 @@
 (require 'nixos-env)
 (require 'nixos-utils)
 (require 'nixos-pass)
+(require 'nixos-input)
 
 
 

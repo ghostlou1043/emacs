@@ -1,1 +1,1 @@
-/nix/store/dj2688wqjv1vajrhysh3q5b850lkfnyd-home-manager-files/.config/emacs/os-lisp/nixos/nixos-env.el
+/nix/store/9bcw74imzpmvvyhwpqkinkkn4xl22qs0-home-manager-files/.config/emacs/os-lisp/nixos/nixos-env.el

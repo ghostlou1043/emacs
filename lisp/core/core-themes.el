@@ -1,5 +1,5 @@
 ;;; core-themes.el --- Core-Themes -*- lexical-binding: t; -*-
-;;; Commentary: 
+;;; Commentary:
 ;;; Code:
 
 (use-package emacs
@@ -26,9 +26,9 @@
         modus-themes-bold-constructs nil ;; Use bold for code syntax highlighting and related.
         modus-themes-mixed-fonts t ;; Toggle the use of monospaced fonts for spacing-sensitive constructs (affects font families).
         modus-themes-prompts nil
-        
+
         ;; Option for completion framework aesthetics 待补全配置后再进行配置
-        ;; This affects Company, Corfu, Flx, Icomplete/Fido, Ido, Ivy, Orderless, Vertico, and the standard *Completions* buffer. 
+        ;; This affects Company, Corfu, Flx, Icomplete/Fido, Ido, Ivy, Orderless, Vertico, and the standard *Completions* buffer.
         modus-themes-completions nil ;; When its properties are nil or an empty list, matching characters in the user interface will have a bold weight and a colored foreground.
 
         ;; Toggle the use of proportionately spaced (variable-pitch) fonts in the User Interface.
@@ -39,9 +39,11 @@
         '((t . t)))           ; keep the default style
 
   (setq modus-themes-common-palette-overrides
-        `(
-          (1043/red "#d00000")
+        `((1043/red "#d00000")
           (cursor 1043/red)               ;; 终端中的光标颜色问题
+          ;; (fg-space "#d00000")
+          ;; (border "#d00000")
+          ;;
           (comment fg-dim)
           ;; Make links use subtle
           (underline-link border)
@@ -63,14 +65,14 @@
           (bg-line-number-active unspecified)
 
           ;; Add support for meow-mode
-                              
-          ;; Make Org agenda more or less colorful  8.12-13 
+
+          ;; Make Org agenda more or less colorful  8.12-13
           ;; Make inline code in prose use alternative styles
 
           ;; Make mail citations and headers more or less colorful
           ;; Make the region preserve text colors, plus other styles
           ;; Make language underlines less colorful
-          
+
           ;; From the section "Make the mode line borderless"
           (border-mode-line-active unspecified)
           (border-mode-line-inactive unspecified)
@@ -96,30 +98,32 @@
   ;; Load the theme of your choice.
   ;; 确保在用户选择加载 Modus 主题时禁用其他主题 此功能会调用钩子 modus-themes-after-load-theme-hook
   (modus-themes-load-theme 'modus-vivendi-tinted)
-  (define-key global-map (kbd "<f7>") #'modus-themes-toggle)) ;; 不要使用 use-package 的 :bind 以免 defer
+  ;; 不要使用 use-package 的 :bind 以免 defer
+  (define-key global-map (kbd "<f7>") #'modus-themes-toggle))
 
+;; 终端中 window 之间的分隔线被隐藏，可开启行号模式作为分隔
 (use-package spacious-padding
   :ensure t
   :config
   ;; These are the default values, but I keep them here for visibility.
   ;; Also check `spacious-padding-subtle-frame-lines'.
   (setq spacious-padding-widths
-        '( :internal-border-width 0
-           :header-line-width 0
+        '( :header-line-width 0
+           :internal-border-width 0
            :mode-line-width 0
            :custom-button-width 0
-           :tab-width 0           
+           :tab-width 0
            :right-divider-width 1
-           :scroll-bar-width 16
-           :fringe-width 8))
+           :fringe-width 8
+           :scroll-bar-width 16))
   (setq spacious-padding-subtle-frame-lines
-      '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive))
+        '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive))
   (spacious-padding-mode +1))
 
 (use-package lin  ;; 待配置定制
   :ensure t
   :config
-  (setq lin-face 'lin-blue)
+  (setq lin-face 'lin-red)
   (setq lin-mode-hooks
         '(bongo-mode-hook
           dired-mode-hook
@@ -149,13 +153,12 @@
          (minibuffer-setup . pulsar-pulse-line)
          (consult-after-jump . pulsar-recenter-top)
          (consult-after-jump . pulsar-reveal-entry))
-
   :config
   (setq pulsar-delay 0.066)
   (setq pulsar-iterations 5)
-  (setq pulsar-face 'pulsar-cyan)
-  (setq pulsar-region-face 'pulsar-cyan)
-  (setq pulsar-highlight-face 'pulsar-cyan))
+  (setq pulsar-face 'pulsar-red)
+  (setq pulsar-region-face 'pulsar-red)
+  (setq pulsar-highlight-face 'pulsar-red))
 
 (provide 'core-themes)
 

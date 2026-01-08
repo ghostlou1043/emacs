@@ -168,7 +168,6 @@
                  t))
 
 (defun 1043/redraw-emoji-mono () ;; fontaine-set-preset-hook
-  (interactive)
   (1043/get-emoji-rescale)
   (1043/update-emoji-rescale)
   (clear-face-cache t) ;; 其实nil也行
