@@ -1,0 +1,21 @@
+patch:
+  # 仅使用「雾凇拼音」的默认配置，配置此行即可
+  __include: rime_ice_suggestion:/
+  # 以下根据自己所需自行定义，仅做参考。
+  # 针对对应处方的定制条目，请使用 <recipe>.custom.yaml 中配置，例如 rime_ice.custom.yaml
+  __patch:
+    key_binder/bindings/+:
+      # 开启逗号句号翻页
+      - { when: paging, accept: comma, send: Page_Up }
+      - { when: has_menu, accept: period, send: Page_Down }
+      # --- 翻页控制 ---
+      # C-f 向后翻页 (Page Down)
+      - { when: has_menu, accept: Control+f, send: Page_Down }
+      # C-b 向前翻页 (Page Up)
+      - { when: has_menu, accept: Control+b, send: Page_Up }
+
+      # --- 候选词选择 ---
+      # C-n 选择下一个候选词 (Down)
+      - { when: has_menu, accept: Control+n, send: Down }
+      # C-p 选择上一个候选词 (Up)
+      - { when: has_menu, accept: Control+p, send: Up }

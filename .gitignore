@@ -8,7 +8,7 @@ eln-cache/
 
 straight/
 undo-fu-session/
-rime/
+rime/*
 
 history
 recentf
