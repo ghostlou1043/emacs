@@ -155,7 +155,6 @@
   :config
   (meow-tree-sitter-register-defaults))
 
-
 (provide 'core-meow)
 
 ;; Local Variables:

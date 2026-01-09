@@ -12,6 +12,7 @@
 (require 'core-utils)
 (require 'core-edit)
 (require 'core-meow)
+(require 'core-magit)
 
 
 

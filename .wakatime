@@ -1,0 +1,16 @@
+[settings]
+# 必须复制全局需要的 exclude！
+exclude =
+    ^COMMIT_EDITMSG$
+    ^TAG_EDITMSG$
+    ^/var/(?!www/).*
+    ^/etc/
+    \.git/
+    node_modules/
+    dist/
+
+include =
+    lisp/
+    init.el
+    early-init.el
+    

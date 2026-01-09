@@ -2,6 +2,124 @@
 ;;; Commentary:
 ;;; Code:
 
+(use-package async
+  :ensure t
+  :config
+  ;; (async-bytecomp-package-mode +1)  ;;
+  (dired-async-mode +1))
+
+(use-package info-colors
+  :ensure t
+  :hook (Info-selection . info-colors-fontify-node))
+
+(use-package inheritenv
+  :ensure t)
+
+(use-package atomic-chrome
+  :ensure t
+  :config
+  ;; (setq atomic-chrome-url-major-mode-alist
+  ;;     '(("github\\.com" . gfm-mode)
+  ;;       ("redmine" . textile-mode)))
+  (setq atomic-chrome-buffer-open-style 'frame)
+  (setq atomic-chrome-default-major-mode 'text-mode)
+  (setq atomic-chrome-enable-auto-update t)
+  (atomic-chrome-start-server))
+
+(use-package daemons
+  :ensure t
+  :config
+  ;; default nil
+  (setq daemons-always-sudo t))
+
+(use-package tldr
+  :ensure t)
+
+;; need mplayer
+(use-package nyan-mode
+  :ensure t
+  :config
+  (setq nyan-animate-nyancat t)
+  (setq nyan-animation-frame-interval 0.2)
+  (setq nyan-bar-length 32)
+  (setq nyan-wavy-trail t)
+  (setq nyan-cat-face-number 1)
+  (setq nyan-minimum-window-width 64))
+
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode +1))
+
+(use-package ement
+  :ensure t)
+
+(use-package envrc
+  :ensure t
+  :hook (after-init . envrc-global-mode)
+  :config
+  ;; 静默启动，不显示详细加载信息
+  (setq envrc-show-summary-in-minibuffer nil))
+
+(use-package plz
+  :ensure t)
+
+(use-package pdd
+  :ensure t)
+
+(use-package snow
+  :ensure t)
+
+(use-package xkcd
+  :ensure t)
+
+(use-package focus
+  :ensure t)
+
+(use-package request
+  :ensure t)
+
+(use-package emacsql
+  :ensure t)
+
+(use-package posframe
+  :ensure t)
+
+(use-package qrencode
+  :ensure t)
+
+(use-package transient
+  :ensure t)
+
+(use-package with-editor
+  :ensure t)
+
+(use-package keycast
+  :ensure t)
+
+(use-package nerd-icons
+  :ensure t
+  :custom
+  (nerd-icons-font-family "IosevkaTerm Nerd Font Mono"))
+
+(use-package rainbow-mode
+  :ensure t
+  :config
+  ;; 有机会改写成按照其他模式触发
+  ;; (rainbow-mode +1)
+  )
+
+(use-package wakatime-mode
+  :ensure t
+  :config
+  ;; 学习如何配置 .wakatime .wakatime-project
+  (global-wakatime-mode +1))
+
+(use-package rainbow-identifiers
+  :ensure t)
+
+
+
 
 (use-package marginalia
   :ensure t
@@ -41,7 +159,6 @@
           next-line))
   (keyfreq-mode +1)
   (keyfreq-autosave-mode +1))
-
 
 
 
@@ -88,6 +205,7 @@
   (setq which-key-special-keys '("SPC" "TAB" "RET" "ESC" "DEL"))
   (setq which-key-show-prefix 'top)
   (which-key-mode +1))
+
 
 
 (provide 'core-utils)

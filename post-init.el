@@ -50,6 +50,9 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; Load built-in features and core configuration.
 (require 'init-core)
 
+;; ;; 英文
+(require 'init-en)
+
 ;; (require 'init-emacs)
 ;; (require 'init-misc)
 
@@ -84,8 +87,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; ;; 中文
 ;; (when sys/macp
 ;;   (require 'init-cn))
-;; ;; 英文
-;; (require 'init-en)
+
 ;; 
 ;; ;; GIT
 ;; (require 'init-magit)
