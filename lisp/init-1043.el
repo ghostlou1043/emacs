@@ -173,6 +173,22 @@
   (clear-face-cache t) ;; 其实nil也行
   (redraw-frame))
 
+;; Meow in tty.
+(defun 1043/cursor-1043/red ()
+  (unless (display-graphic-p)
+    (send-string-to-terminal "\033]12;#d00000\007")))
+
+(defun 1043/cursor-auto ()
+  "根据当前背景颜色亮度，将终端光标设置为黑色或白色。"
+  (unless (display-graphic-p)
+    (let* ((bg-color (frame-parameter nil 'background-color))
+           (bg-rgb (color-values bg-color))                  
+           (brightness (+ (nth 0 bg-rgb) (nth 1 bg-rgb) (nth 2 bg-rgb))))
+      (if (< brightness 100000)
+          (send-string-to-terminal "\033]12;#FFFFFF\007")
+        (send-string-to-terminal "\033]12;#000000\007")))))
+
+
 (provide 'init-1043)
 
 ;; Local variables:

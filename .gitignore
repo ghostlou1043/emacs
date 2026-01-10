@@ -27,3 +27,4 @@ fontaine-latest-state.eld
 
 # 忽略一些临时的自定义文件
 custom.el
+/transient/
