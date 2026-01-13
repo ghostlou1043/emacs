@@ -6,6 +6,12 @@
       user-mail-address "ghostlou1043@gmail.com"
       auth-sources '("~/.authinfo.gpg"))
 
+;; Authinfo Emacs
+(defvar 1043/authinfo t)
+(defun 1043/enable-authinfo-p ()
+  "Control whether to enable the Authinfo configuration module."
+  1043/authinfo)
+
 ;; Select System Scale.
 ;; https://mydevice.alsacreations.com/
 ;; window.devicePixelRatio
@@ -118,12 +124,12 @@
    ((not (file-directory-p directory))
     (message "Directory does not exist: %s" directory)
     nil)
-   (t 
-    (let ((files (directory-files directory 
-                                  nil 
-                                  directory-files-no-dot-files-regexp 
+   (t
+    (let ((files (directory-files directory
+                                  nil
+                                  directory-files-no-dot-files-regexp
                                   t
-                                  2))) 
+                                  2)))
       (null (delete ".DS_Store" files))))))
 
 ;; Fonts.
@@ -134,7 +140,7 @@
 
 (defun 1043/set-font-family-list ()
   "Initialize cached font family list."
-  (setq 1043/font-family-list (font-family-list)))  
+  (setq 1043/font-family-list (font-family-list)))
 
 (defun 1043/set-font-if-exists (script font-family)
   "If FONT-FAMILY exists, set it for SCRIPT."
@@ -174,7 +180,7 @@
   (redraw-frame))
 
 ;; Meow in tty.
-(defun 1043/cursor-1043/red ()
+(defun 1043/cursor-red ()
   (unless (display-graphic-p)
     (send-string-to-terminal "\033]12;#d00000\007")))
 
@@ -182,11 +188,13 @@
   "根据当前背景颜色亮度，将终端光标设置为黑色或白色。"
   (unless (display-graphic-p)
     (let* ((bg-color (frame-parameter nil 'background-color))
-           (bg-rgb (color-values bg-color))                  
+           (bg-rgb (color-values bg-color))
            (brightness (+ (nth 0 bg-rgb) (nth 1 bg-rgb) (nth 2 bg-rgb))))
       (if (< brightness 100000)
           (send-string-to-terminal "\033]12;#FFFFFF\007")
         (send-string-to-terminal "\033]12;#000000\007")))))
+
+
 
 
 (provide 'init-1043)

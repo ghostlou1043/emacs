@@ -13,10 +13,14 @@
 (require 'core-edit)
 (require 'core-meow)
 (require 'core-magit)
+(require 'core-language)
+(require 'core-read)
+(require 'core-dired)
+(require 'core-shell)
 
 
 
-;; (require 'core-dired)
+
 
 
 

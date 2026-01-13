@@ -17,6 +17,59 @@
       
   (setq visual-fill-column-width nil))
 
+(use-package lin  ;; 待配置定制
+  :ensure t
+  :config
+  (setq lin-face 'lin-red)
+  (setq lin-mode-hooks
+        '(bongo-mode-hook
+          dired-mode-hook
+          elfeed-search-mode-hook
+          git-rebase-mode-hook
+          grep-mode-hook
+          ibuffer-mode-hook
+          ilist-mode-hook
+          ledger-report-mode-hook
+          log-view-mode-hook
+          magit-log-mode-hook
+          mu4e-headers-mode-hook
+          notmuch-search-mode-hook
+          notmuch-tree-mode-hook
+          occur-mode-hook
+          org-agenda-mode-hook
+          pdf-outline-buffer-mode-hook
+          proced-mode-hook
+          tabulated-list-mode-hook))
+  (lin-global-mode 1))
+
+(use-package pulsar ;; pulsar-highlight-permanently-dwim 待与其他包集成
+  :ensure t
+  :init
+  (pulsar-global-mode 1)
+  :hook ((next-error . pulsar-pulse-line)
+         (minibuffer-setup . pulsar-pulse-line)
+         (consult-after-jump . pulsar-recenter-top)
+         (consult-after-jump . pulsar-reveal-entry))
+  :config
+  (setq pulsar-delay 0.066)
+  (setq pulsar-iterations 5)
+  (setq pulsar-face 'pulsar-red)
+  (setq pulsar-region-face 'pulsar-red)
+  (setq pulsar-highlight-face 'pulsar-red))
+
+;; (use-package symbol-overlay
+;;   :ensure t
+;;   :bind
+;;   ((:map global-map
+;;          ("C-c o i" . symbol-overlay-put)
+;;          ("C-c o f" . symbol-overlay-switch-forward)
+;;          ("C-c o b" . symbol-overlay-switch-backward)
+;;          ("C-c o r" . symbol-overlay-remove-all)
+;;          ("C-c o v" . symbol-overlay-query-replace))
+;;    (:map symbol-overlay-map
+;;          ("f" . symbol-overlay-switch-forward)
+;;          ("b" . symbol-overlay-switch-backward)
+;;          )))
 
 
 (provide 'core-visual)

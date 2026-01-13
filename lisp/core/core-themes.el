@@ -120,45 +120,6 @@
         '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive))
   (spacious-padding-mode +1))
 
-(use-package lin  ;; 待配置定制
-  :ensure t
-  :config
-  (setq lin-face 'lin-red)
-  (setq lin-mode-hooks
-        '(bongo-mode-hook
-          dired-mode-hook
-          elfeed-search-mode-hook
-          git-rebase-mode-hook
-          grep-mode-hook
-          ibuffer-mode-hook
-          ilist-mode-hook
-          ledger-report-mode-hook
-          log-view-mode-hook
-          magit-log-mode-hook
-          mu4e-headers-mode-hook
-          notmuch-search-mode-hook
-          notmuch-tree-mode-hook
-          occur-mode-hook
-          org-agenda-mode-hook
-          pdf-outline-buffer-mode-hook
-          proced-mode-hook
-          tabulated-list-mode-hook))
-  (lin-global-mode 1))
-
-(use-package pulsar ;; pulsar-highlight-permanently-dwim 待与其他包集成
-  :ensure t
-  :init
-  (pulsar-global-mode 1)
-  :hook ((next-error . pulsar-pulse-line)
-         (minibuffer-setup . pulsar-pulse-line)
-         (consult-after-jump . pulsar-recenter-top)
-         (consult-after-jump . pulsar-reveal-entry))
-  :config
-  (setq pulsar-delay 0.066)
-  (setq pulsar-iterations 5)
-  (setq pulsar-face 'pulsar-red)
-  (setq pulsar-region-face 'pulsar-red)
-  (setq pulsar-highlight-face 'pulsar-red))
 
 (provide 'core-themes)
 

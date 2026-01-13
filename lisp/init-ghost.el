@@ -37,6 +37,8 @@
   (setq tab-always-indent 'complete) ; 按 tab 时尝试缩进，若缩进无变化则尝试补全 init.el
   (setq tab-first-completion 'word-or-paren-or-punct) ;; init.el
 
+  (setq text-mode-ispell-word-completion nil)
+
   ;; minibuffer
   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
   (setq-default enable-recursive-minibuffers t))
