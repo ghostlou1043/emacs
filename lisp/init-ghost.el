@@ -12,7 +12,7 @@
 
   ;; 可能需要调整
   (setq-default fringes-outside-margins nil) ; 让 fringes 在 margins 内部（影响 diff-hl、flymake 等显示）
-  
+
   ;; Git
   (setq vc-handled-backends '(Git)) ; 只启用 Git 作为版本控制后端（避免其他后端性能/噪音）
 
@@ -26,7 +26,7 @@
   (setq kill-ring-max 200) ; kill-ring（剪切历史）最大保存 200 项
   (setq kill-do-not-save-duplicates t) ; 不保存重复的 kill 条目（减少冗余） init.el
   (setq-default mouse-yank-at-point nil) ; 鼠标粘贴时在光标处插入，而不是在点击位置 init.el
-  (setq-default select-enable-clipboard t) ; 使用系统剪贴板（和外部程序共享剪贴板） 
+  (setq-default select-enable-clipboard t) ; 使用系统剪贴板（和外部程序共享剪贴板）
   (setq-default select-enable-primary nil) ; 禁用 X Window PRIMARY 选择（避免意外粘贴）
 
   ;; 缩进
@@ -34,15 +34,20 @@
   (setq tab-width 4) ; 将 tab 显示宽度设置为 4（仅展示，与实际插入空格无关） init.el
 
   ;; 补全
+  (setq completion-cycle-threshold nil)
   (setq tab-always-indent 'complete) ; 按 tab 时尝试缩进，若缩进无变化则尝试补全 init.el
-  (setq tab-first-completion 'word-or-paren-or-punct) ;; init.el
+  ;; (setq tab-first-completion 'word-or-paren-or-punct) ;; init.el
+  (setq tab-first-completion nil) ;; 如上配置会导致光标在括号前需按 2 次 TAB 键才弹出 corfu
+  
 
   (setq text-mode-ispell-word-completion nil)
+
+  (setq read-extended-command-predicate #'command-completion-default-include-p) ;; init.el
 
   ;; minibuffer
   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
   (setq-default enable-recursive-minibuffers t))
-  
+
   ;; :bind
   ;; (:map global-map
   ;;       ("C-t" . nil) ; 取消 C-t 的默认绑定（transpose-chars）

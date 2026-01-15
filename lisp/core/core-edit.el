@@ -213,16 +213,16 @@
                 ("f" . sp-up-sexp))
 
    (:repeat-map 1043/smartparens-backward-repeat-map
-                ("M-a" . sp-backward-sexp)
-                ("C-a" . sp-beginning-of-sexp)
-                ("C-b" . sp-backward-symbol)
+                ;; ("M-a" . sp-backward-sexp)
+                ;; ("C-a" . sp-beginning-of-sexp)
+                ;; ("C-b" . sp-backward-symbol)
                 ("a" . sp-backward-barf-sexp) ;; 把表达式扔到左边
                 ("b" . sp-backward-slurp-sexp) ;; 反向吸收,把左边的表达式吸进来 ->
                 )
    (:repeat-map 1043/smartparens-forward-repeat-map
-                ("M-e" . sp-forward-sexp)
-                ("C-e" . sp-end-of-sexp)
-                ("C-f" . sp-forward-symbol)
+                ;; ("M-e" . sp-forward-sexp)
+                ;; ("C-e" . sp-end-of-sexp)
+                ;; ("C-f" . sp-forward-symbol)
                 ("e" . sp-forward-barf-sexp) ;; 把表达式扔到右边
                 ("f" . sp-forward-slurp-sexp) ;; 正向吸收,把右边的表达式吸进来 <-
                 ))

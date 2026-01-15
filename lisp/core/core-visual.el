@@ -4,7 +4,7 @@
 
 (use-package visual-fill-column
   :ensure t
-  :hook ((visual-line-mode-hook . visual-fill-column-for-vline))
+  :hook (visual-line-mode . visual-fill-column-for-vline)
   ;; visual-fill-column-toggle-center-text 与 visual-line-mode 需要设置快捷键
   :config
   (setq visual-fill-column-center-text nil)

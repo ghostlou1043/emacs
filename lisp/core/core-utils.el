@@ -56,10 +56,13 @@
 
 (use-package envrc
   :ensure t
-  :hook (after-init . envrc-global-mode)
   :config
+  (if (boundp 'elpaca-after-init-hook)
+      (add-hook 'elpaca-after-init-hook #'envrc-global-mode)
+    (add-hook 'after-init-hook #'envrc-global-mode))
+  
   ;; 静默启动，不显示详细加载信息
-  (setq envrc-show-summary-in-minibuffer nil))
+  (setq envrc-show-summary-in-minibuffer t))
 
 (use-package plz
   :ensure t)

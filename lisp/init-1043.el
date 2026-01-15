@@ -195,8 +195,6 @@
         (send-string-to-terminal "\033]12;#000000\007")))))
 
 
-
-
 (provide 'init-1043)
 
 ;; Local variables:

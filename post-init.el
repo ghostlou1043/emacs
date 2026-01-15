@@ -49,6 +49,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 ;; Load built-in features and core configuration.
 (require 'init-core)
+(require 'init-corfu)
 
 ;; ;; 英文
 (require 'init-en)

@@ -133,7 +133,7 @@
   (when (fboundp '1043/cursor-auto)
     (add-hook 'meow-insert-enter-hook #'1043/cursor-auto))
 
-  (when (fboundp '1043/cursor-1043/red)
+  (when (fboundp '1043/cursor-red)
     (add-hook 'meow-insert-exit-hook #'1043/cursor-red))
   
   (when (locate-library "modus-themes")
