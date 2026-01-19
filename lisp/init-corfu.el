@@ -2,11 +2,13 @@
 ;;; Commentary:
 ;;; Code:
 
+;; 提供现代化的 buffer 中补全前端
 (use-package corfu
   :ensure t
   :if (1043/enable-corfu-p)
   :init
   (global-corfu-mode +1)
+
   :bind (:map corfu-map
               ;; ("M-TAB")	corfu-expand
               ;; ("M-g")	corfu-info-location
@@ -25,6 +27,7 @@
   (setq corfu-cycle nil)              ;; Enable cycling for `corfu-next/previous'
   (setq corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   (setq corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (setq corfu-preview-current 'insert);; 避免双重补全
 
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
@@ -46,20 +49,66 @@
   ;;                       completion-category-defaults nil
   ;;                       completion-pcm-leading-wildcard t)))
 
-  (add-hook 'corfu-mode-hook
-          (lambda ()
-            ;; setq-local 意味着这些设置只在当前开启了 Corfu 的缓冲区生效
-            ;; 不会影响 Minibuffer
-            (setq-local completion-styles '(basic)
-                        completion-category-overrides nil
-                        completion-category-defaults nil)))
+  ;; (add-hook 'corfu-mode-hook
+  ;;         (lambda ()
+  ;;           ;; setq-local 意味着这些设置只在当前开启了 Corfu 的缓冲区生效
+  ;;           ;; 不会影响 Minibuffer
+  ;;           (setq-local completion-styles '(basic)
+  ;;                       completion-category-overrides nil
+  ;;                       ;; completion-category-defaults nil
+  ;;                       )))
   )
 
+;; 提供 corfu 候选项图标
 (use-package nerd-icons-corfu
   :ensure t
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+;; 提供 orderless 补全匹配风格
+(use-package orderless
+  :ensure t
+  :config
+  (setq orderless-matching-styles '(orderless-literal orderless-regexp orderless-flex))
+  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+
+  ;; 优先级 overrides > defaults > completion-styles
+  ;; completion-at-point-functions 会随 major-mode 改变（即存在全局与局部），
+  ;; 部分功能如 eglot,lsp-mode 也会追加 completion-at-point-functions
+  (setq completion-category-overrides '((file (styles partial-completion))
+                                        (eglot (styles orderless))
+                                        (eglot-capf (styles orderless))))
+  (setq completion-category-defaults nil) ;; Disable defaults, use our settings
+  (setq completion-styles '(orderless basic))
+
+  (setq completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
+
+;; 提供额外的补全源
+(use-package cape
+  :ensure t
+  ;; :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
+  ;; Alternatively bind Cape commands individually.
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        ...)
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  ;; (add-hook 'completion-at-point-functions #'cape-dabbrev) ;; 交给 其他按键
+  (add-hook 'completion-at-point-functions #'cape-file)
+
+  ;; 看情况配置
+  ;; (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; ...
+  :config
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+
 
 ;; (use-package cape
 ;;   :straight t
