@@ -13,7 +13,7 @@
         ("M-<f6>" . fontaine-set-preset))
   :config
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
-  (setq fontaine-presets 
+  (setq fontaine-presets
         '((small
            :default-height 105
            )
@@ -57,7 +57,7 @@
            :bold-weight bold
            :italic-family nil
            :italic-slant italic
-           
+
            :line-spacing nil)))
   (when (fboundp '1043/redraw-emoji-mono)
     (add-hook 'fontaine-set-preset-hook #'1043/redraw-emoji-mono)) ;; 令 emoji 随着字体放大也能等宽
@@ -67,8 +67,8 @@
 (defun sys/set-fonts ()
   (1043/set-font-family-list)
   ;; Fontaine
-  (with-eval-after-load 'fontaine
-    (fontaine-mode +1)))
+  (when (locate-library "fontaine")
+    (fontaine-mode +1))
   ;; Latin
   (1043/set-font-if-exists 'latin "IosevkaTerm Nerd Font")
   ;; Greek
@@ -81,13 +81,13 @@
   ;; Symbols append
   (when (member "Symbols Nerd Font" 1043/font-family-list)
     (set-fontset-font t 'symbol (font-spec :family "Symbols Nerd Font") nil 'append))
-  (when (member "Noto Sans Symbols" 1043/font-family-list)    
+  (when (member "Noto Sans Symbols" 1043/font-family-list)
     (set-fontset-font t 'symbol (font-spec :family "Noto Sans Symbols") nil 'append))
   (when (member "Noto Sans Symbols 2" 1043/font-family-list)
     (set-fontset-font t 'symbol (font-spec :family "Noto Sans Symbols 2") nil 'append))
   (when (member "Symbola" 1043/font-family-list)
     (set-fontset-font t 'symbol (font-spec :family "Symbola") nil 'append))
-  
+
   ;; CJK
   (1043/set-font-if-exists 'han "LXGW WenKai")
   (1043/set-font-if-exists 'cjk-misc "LXGW WenKai")

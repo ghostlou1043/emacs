@@ -4,8 +4,6 @@
 
 (use-package vertico ;; minibuffer 补全 UI
   :ensure t
-  :unless (1043/enable-lsp-bridge-p)
-
   :config
   (setq vertico-scroll-margin 2) ;; Different scroll margin
   (setq vertico-count 10) ;; Show more candidates
@@ -51,8 +49,6 @@
   (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
   (vertico-mode +1))
-
-
 
 ;; Configure directory extension.
 (use-package vertico-directory

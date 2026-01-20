@@ -43,7 +43,8 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (setq lou/socks-proxy-version "5")
 
 ;; Select Module.
-(setq 1043/completion-backend 'none)
+(setq 1043/completion-backend 'lsp-bridge)
+;; (setq 1043/completion-backend 'eglot)
 (setq 1043/file-manager 'dired)
 (setq 1043/themes 'modus-themes)
 
@@ -51,6 +52,8 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-core)
 (require 'init-vertico)
 (require 'init-corfu)
+(require 'init-lsp-bridge)
+
 
 ;; ;; 英文
 (require 'init-en)
