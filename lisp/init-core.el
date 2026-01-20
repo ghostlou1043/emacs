@@ -17,6 +17,9 @@
 (require 'core-read)
 (require 'core-dired)
 (require 'core-shell)
+(require 'core-orderless)
+(require 'core-yasnippet)
+
 
 
 

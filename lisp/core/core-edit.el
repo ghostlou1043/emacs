@@ -232,6 +232,7 @@
   (show-paren-mode -1)
   ;; 显示配对的括号
   (setq sp-show-pair-delay 0.125)
+  (setq sp-highlight-pair-overlay nil)
   (show-smartparens-global-mode +1))
 
 (use-package anzu

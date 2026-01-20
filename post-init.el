@@ -49,6 +49,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 ;; Load built-in features and core configuration.
 (require 'init-core)
+(require 'init-vertico)
 (require 'init-corfu)
 
 ;; ;; 英文
@@ -57,20 +58,10 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; (require 'init-emacs)
 ;; (require 'init-misc)
 
-;; ;; 主题
-;; (require 'init-themes)
-;; ;; 字体
-;; (require 'init-font)
 
-;; ;; 保存
-;; (require 'init-save)
-;; 
 ;; ;; 编辑
 ;; (require 'init-edit)
 ;; (require 'init-meow)
-;; 
-;; ;; 密码
-;; (require 'init-pass)
 ;; 
 ;; ;; ;; 文件管理
 ;; (unless kaladin/drivish
@@ -83,8 +74,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; (require 'init-windows)
 ;; (require 'init-dashboard)
 ;; 
-;; ;; 输入法
-;; (require 'init-input)
 ;; ;; 中文
 ;; (when sys/macp
 ;;   (require 'init-cn))
@@ -118,16 +107,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; 项目管理
 ;;(require 'init-project)
 
-;; 语言
-;; (require 'init-language)
-;; (require 'init-nix)
-;; (require 'init-lua)
-;; (require 'init-kdl)
-;; (require 'init-yaml)
-;; (require 'init-json)
-;; (require 'init-elisp)
-;; (require 'init-cmake)
-;; (require 'init-markdown)
 
 ;;(require 'init-go)
 ;;(require 'init-python)

@@ -45,6 +45,8 @@
   (setq read-extended-command-predicate #'command-completion-default-include-p) ;; init.el
 
   ;; minibuffer
+  (setq minibuffer-prompt-properties
+        '(read-only t intangible t cursor-intangible t face minibuffer-prompt))  ;; init.el
   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
   (setq-default enable-recursive-minibuffers t))
 

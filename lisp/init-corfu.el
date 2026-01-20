@@ -5,7 +5,7 @@
 ;; 提供现代化的 buffer 中补全前端
 (use-package corfu
   :ensure t
-  :if (1043/enable-corfu-p)
+  :unless (1043/enable-lsp-bridge-p)
   :init
   (global-corfu-mode +1)
 
@@ -27,7 +27,7 @@
   (setq corfu-cycle nil)              ;; Enable cycling for `corfu-next/previous'
   (setq corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   (setq corfu-quit-no-match nil)      ;; Never quit, even if there is no match
-  ;; (setq corfu-preview-current 'insert);; 避免双重补全
+  (setq corfu-preview-current 'insert)
 
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
@@ -62,32 +62,15 @@
 ;; 提供 corfu 候选项图标
 (use-package nerd-icons-corfu
   :ensure t
+  :unless (1043/enable-lsp-bridge-p)
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
-;; 提供 orderless 补全匹配风格
-(use-package orderless
-  :ensure t
-  :config
-  (setq orderless-matching-styles '(orderless-literal orderless-regexp orderless-flex))
-  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
-  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-
-  ;; 优先级 overrides > defaults > completion-styles
-  ;; completion-at-point-functions 会随 major-mode 改变（即存在全局与局部），
-  ;; 部分功能如 eglot,lsp-mode 也会追加 completion-at-point-functions
-  (setq completion-category-overrides '((file (styles partial-completion))
-                                        (eglot (styles orderless))
-                                        (eglot-capf (styles orderless))))
-  (setq completion-category-defaults nil) ;; Disable defaults, use our settings
-  (setq completion-styles '(orderless basic))
-
-  (setq completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
-
 ;; 提供额外的补全源
 (use-package cape
   :ensure t
+  :unless (1043/enable-lsp-bridge-p)
   ;; :bind ("C-c p" . cape-prefix-map) ;; Alternative key: M-<tab>, M-p, M-+
   ;; Alternatively bind Cape commands individually.
   ;; :bind (("C-c p d" . cape-dabbrev)
@@ -95,6 +78,7 @@
   ;;        ("C-c p f" . cape-file)
   ;;        ...)
   :init
+
   ;; Add to the global default value of `completion-at-point-functions' which is
   ;; used by `completion-at-point'.  The order of the functions matters, the
   ;; first function returning a result wins.  Note that the list of buffer-local
@@ -110,72 +94,9 @@
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 
 
-;; (use-package cape
-;;   :straight t
-;;   :unless kaladin/lsp-bridge
-;;   :after corfu
-;;   :init
-;;   (add-to-list 'completion-at-point-functions #'cape-file)
-;;   (add-to-list 'completion-at-point-functions #'cape-elisp-block)
-;;   (defun kaladin/eglot-capf ()
-;;     (setq-local completion-at-point-functions
-;;                 (list (cape-capf-super
-;;                        #'eglot-completion-at-point
-;;                        ;; #'tempel-expand
-;;                        #'cape-file))))
-;;   (add-hook 'eglot-managed-mode-hook #'kaladin/eglot-capf)
-;;   :bind-keymap ("C-c p" . cape-prefix-map)
-;;   :config
-;;   ;; eglot
-;;   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
-
 ;; hippie-expand 涵盖了 dabbrev 的功能，但 corfu 也可以替代 hippie-expand 从而直接使用 dabbrev
 
-;; (use-package hotfuzz-module
-;;   :straight nil
-;;   :load-path "~/.config/emacs/site-lisp/hotfuzz-module"
-;;   :init
-;;   ;; 手动加载共享库
-;;   (require 'hotfuzz-module)
-;;   :config
-;;   (setq consult--tofu-char #x100000
-;;         consult--tofu-range #x00fffe))
 
-;; (use-package hotfuzz
-;;   :straight t)
-
-;; (use-package flx-rs
-;;   :straight (flx-rs
-;;              :repo "jcs-elpa/flx-rs"
-;;              :fetcher github
-;;              :files (:defaults "bin"))
-;;   :unless kaladin/lsp-bridge
-;;   :config
-;;   (setq fussy-score-fn 'fussy-flx-rs-score)
-;;   (flx-rs-load-dyn))
-;;
-;; (use-package fussy
-;;   :straight t
-;;   :unless kaladin/lsp-bridge
-;;   :config
-;;   (setq fussy-filter-fn 'fussy-filter-default)
-;;   (setq fussy-score-fn 'fussy-flx-rs-score)
-;;   (setq fussy-use-cache t)
-;;   (setq completion-styles '(fussy basic)
-;;         completion-category-defaults nil
-;;         completion-category-overrides '((file (styles basic partial-completion))
-;;                                         (eglot (styles fussy basic))
-;;                                         (eglot-capf (styles fussy basic))))
-;;   (setq fussy-compare-same-score-fn 'fussy-histlen->strlen<)
-;;   (fussy-eglot-setup)
-;;   (fussy-setup)
-;;
-;;   (advice-add 'corfu--capf-wrapper :before 'fussy-wipe-cache)
-;;   (add-hook 'corfu-mode-hook
-;;             (lambda ()
-;;               (setq-local fussy-max-candidate-limit 5000
-;;                           fussy-default-regex-fn 'fussy-pattern-first-letter
-;;                           fussy-prefer-prefix nil))))
 ;;
 ;; (use-package corfu
 ;;   :straight t

@@ -60,7 +60,7 @@
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'envrc-global-mode)
     (add-hook 'after-init-hook #'envrc-global-mode))
-  
+
   ;; 静默启动，不显示详细加载信息
   (setq envrc-show-summary-in-minibuffer t))
 
@@ -129,14 +129,7 @@
   :config
   (marginalia-mode +1))
 
-(use-package vertico ;; minibuffer 补全 UI
-  :ensure t
-  :config
-  (setq vertico-scroll-margin 2) ;; Different scroll margin
-  (setq vertico-count 10) ;; Show more candidates
-  (setq vertico-resize nil) ;; Grow and shrink the Vertico minibuffer
-  (setq vertico-cycle nil) ;; Enable cycling for `vertico-next/previous'
-  (vertico-mode +1))
+
 
 (use-package helpful
   :ensure t

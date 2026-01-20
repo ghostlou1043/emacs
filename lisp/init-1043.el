@@ -69,14 +69,6 @@
   "Returns t if eglot is the selected completion backend."
   (eq 1043/completion-backend 'eglot))
 
-(defun 1043/enable-corfu-p ()
-  "Returns t if corfu should be enabled.
-   Enabled for 'none, 'eglot, 'lsp-mode, or 'lsp-proxy."
-  (or (eq 1043/completion-backend 'none)
-      (eq 1043/completion-backend 'eglot)
-      (eq 1043/completion-backend 'lsp-mode)
-      (eq 1043/completion-backend 'lsp-proxy)))
-
 ;; Select File Manager.
 (defvar 1043/file-manager 'dired
   "The master switch for file manager.

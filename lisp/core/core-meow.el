@@ -129,16 +129,16 @@
   (custom-set-faces
    '(meow-insert-cursor ((t (:background "#FFFFFF"))))
    '(meow-normal-cursor ((t (:background "#d00000")))))
-  
+
   (when (fboundp '1043/cursor-auto)
     (add-hook 'meow-insert-enter-hook #'1043/cursor-auto))
 
   (when (fboundp '1043/cursor-red)
     (add-hook 'meow-insert-exit-hook #'1043/cursor-red))
-  
-  (when (locate-library "modus-themes")
+
+  (with-eval-after-load 'modus-themes
     (add-hook 'modus-themes-after-load-theme-hook #'1043/cursor-red))
-    
+
   (setq meow-expand-exclude-mode-list '(markdown-mode org-mode))
   (add-to-list 'meow-mode-state-list '((vundo-mode . insert)
                                        (fundamental-mode . motion)

@@ -67,8 +67,8 @@
 (defun sys/set-fonts ()
   (1043/set-font-family-list)
   ;; Fontaine
-  (when (locate-library "fontaine")
-    (fontaine-mode +1))
+  (with-eval-after-load 'fontaine
+    (fontaine-mode +1)))
   ;; Latin
   (1043/set-font-if-exists 'latin "IosevkaTerm Nerd Font")
   ;; Greek
