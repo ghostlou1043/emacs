@@ -19,23 +19,6 @@
   (setq magit-refresh-status-buffer t)  ;; 非必要不设置为 nil 以提高性能
   (setq magit-view-git-manual-method 'woman))
 
-(use-package magit-gptcommit
-  :ensure t
-  :after magit
-  :init
-  (require 'llm-openai)
-  :bind (:map git-commit-mode-map
-              ("C-c C-g" . magit-gptcommit-commit-accept))
-  :config
-  (setq magit-gptcommit-llm-provider (make-llm-openai-compatible
-                                      :url "https://back.zaiwenai.com/api/v1/ai/"
-                                      :chat-model "Gemini-3.0-Flash"
-                                      :key (plist-get (car (auth-source-search :host "back.zaiwenai.com")) :secret)))
-  (setq llm-warn-on-nonfree nil)
-
-  (magit-gptcommit-mode 1)
-  (magit-gptcommit-status-buffer-setup))
-
 ;; (setq magit-submodule-list-columns
 ;;       '(("Name" 25 magit-submodule-name)
 ;;         ("Path" 40 magit-submodule-path)
@@ -44,6 +27,40 @@
 ;; (add-hook 'magit-status-sections-hook 'magit-insert-repo-status))
 ;; 配置magit进一步的行为
 ;; (setq magit-push-always-verify nil "在推送时不总是要求验证")
+
+
+
+(use-package magit-gptcommit
+  :ensure t
+  :after magit
+  :init
+  (require 'llm-openai)
+  ;; :bind (:map git-commit-mode-map
+  ;;             ("C-c C-g" . magit-gptcommit-commit-accept))
+  :config
+  (setq llm-log nil)
+  (setq llm-warn-on-nonfree nil)
+
+  (setq magit-gptcommit-llm-provider (make-llm-openai-compatible
+                                      :url "https://back.zaiwenai.com/api/v1/ai/"
+                                      ;; :chat-model "Gemini-3.0-Flash"
+                                      :chat-model "Claude-Sonnet-4.5"
+                                      :key (plist-get (car (auth-source-search :host "back.zaiwenai.com")) :secret)))
+
+  ;; (setq magit-gptcommit-prompt )
+  (setq magit-gptcommit-cache-limit 163840)
+
+  (setq magit-gptcommit-max-token 163840)
+  (setq magit-gptcommit-determine-max-token nil)
+
+  (setq magit-gptcommit-llm-provider-max-tokens nil)
+  (setq magit-gptcommit-llm-provider-temperature nil)
+
+
+
+  ;; (magit-gptcommit-mode +1) ;; 自动进行 gptcommit , 影响 stage
+  (magit-gptcommit-status-buffer-setup))
+
 
 
 ;; (use-package magit-delta
