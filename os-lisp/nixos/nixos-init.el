@@ -8,7 +8,7 @@
 (require 'nixos-utils)
 (require 'nixos-pass)
 (require 'nixos-input)
-
+(require 'nixos-cn)
 
 
 

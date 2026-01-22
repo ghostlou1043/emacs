@@ -12,6 +12,7 @@
 
   ;; 可能需要调整
   (setq-default fringes-outside-margins nil) ; 让 fringes 在 margins 内部（影响 diff-hl、flymake 等显示）
+  (setq confirm-kill-processes nil) ;; 设为 nil 使退出自动杀掉进程
 
   ;; Git
   (setq vc-handled-backends '(Git)) ; 只启用 Git 作为版本控制后端（避免其他后端性能/噪音）

@@ -193,8 +193,6 @@
   (keyfreq-mode +1)
   (keyfreq-autosave-mode +1))
 
-
-
 (use-package link-hint
   :ensure t
   ;; arfd 留给 eglot
