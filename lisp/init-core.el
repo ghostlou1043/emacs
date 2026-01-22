@@ -19,6 +19,7 @@
 (require 'core-shell)
 (require 'core-orderless)
 (require 'core-yasnippet)
+(require 'core-gptel)
 
 
 
