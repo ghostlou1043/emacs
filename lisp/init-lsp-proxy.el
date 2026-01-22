@@ -11,7 +11,8 @@
   :init
   (setq lsp-proxy--exec-file
         (expand-file-name "lsp-proxy/node_modules/.bin/emacs-lsp-proxy" user-emacs-directory))
-  :hook ((python-ts-mode)
+  :hook ((python-mode)
+         (python-ts-mode)
          (tsx-ts-mode)
          (js-ts-mode)
          (typescript-mode)

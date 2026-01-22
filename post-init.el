@@ -58,12 +58,12 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-lsp-bridge)
 (require 'init-lsp-proxy)
 (require 'init-apheleia)
+(require 'init-flycheck)
 
 
 ;; ;; 英文
 (require 'init-en)
 
-;; (require 'init-emacs)
 ;; (require 'init-misc)
 
 
@@ -72,11 +72,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; (require 'init-meow)
 ;; 
 ;; ;; ;; 文件管理
-;; (unless kaladin/drivish
-;;   (require 'init-dired))
-;; 
-;; (when kaladin/drivish
-;;   (require 'init-drivish))
 ;; 
 ;; ;; ;; 布局
 ;; (require 'init-windows)
@@ -87,17 +82,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;;   (require 'init-cn))
 
 ;; 
-;; ;; GIT
-;; (require 'init-magit)
-;; ;; 阅读
-;; (require 'init-read)
-;; ;; Game
-;; (require 'init-2048)
-;; ;; 终端
-;; (require 'init-shell)
-
-;; ;; APP
-;; 
 ;; (require 'init-eaf)
 ;; (require 'init-paw)
 ;; 
@@ -105,16 +89,9 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; (require 'init-elfeed)
 ;; 
 ;; (require 'init-treemacs)
-;; 
-;; ;; GPT
-;; (require 'init-gpt)
-;; 
-;; ;; 补全
-;; (require 'init-vertico)
 
 ;; 项目管理
 ;;(require 'init-project)
-
 
 ;;(require 'init-go)
 ;;(require 'init-python)
@@ -126,7 +103,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;;(require 'init-denote)
 
 ;; 各种 APP
-;;(require 'init-hackernews)
 
 (require 'init-os)
 

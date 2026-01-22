@@ -48,18 +48,26 @@
   (setq minibuffer-prompt-properties
         '(read-only t intangible t cursor-intangible t face minibuffer-prompt))  ;; init.el
   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
-  (setq-default enable-recursive-minibuffers t))
+  (setq-default enable-recursive-minibuffers t)
 
-  ;; :bind
-  ;; (:map global-map
-  ;;       ("C-t" . nil) ; 取消 C-t 的默认绑定（transpose-chars）
-  ;;       ("C-r" . nil) ; 取消 C-r 的默认绑定（isearch-backward）
-  ;;       ("M-l" . move-to-window-line-top-bottom) ; M-l：循环在窗口顶部/底部移动（move-to-window-line-top-bottom）
-  ;;       ("M-r" . repeat) ; M-r 绑定到 repeate
-  ;;       ("C-x C-l" . delete-blank-lines) ; C-x C-l 绑定删除空行
-  ;;       ("C-x C-o" . find-alternate-file) ; C-x C-o 绑定为 find-alternate-file（替换当前 buffer 文件）
-  ;;       ("C-x C-v" . read-only-mode) ; 将 C-x C-v 绑定为 read-only-mode（覆盖默认 find-file）
-  ;;       )
+  ;; 启用像素滚动
+  (when (fboundp 'pixel-scroll-precision-mode)
+    (pixel-scroll-precision-mode)) ; 启用更平滑的像素精度滚动模式（如果可用）
+
+  )
+
+
+
+;; :bind
+;; (:map global-map
+;;       ("C-t" . nil) ; 取消 C-t 的默认绑定（transpose-chars）
+;;       ("C-r" . nil) ; 取消 C-r 的默认绑定（isearch-backward）
+;;       ("M-l" . move-to-window-line-top-bottom) ; M-l：循环在窗口顶部/底部移动（move-to-window-line-top-bottom）
+;;       ("M-r" . repeat) ; M-r 绑定到 repeate
+;;       ("C-x C-l" . delete-blank-lines) ; C-x C-l 绑定删除空行
+;;       ("C-x C-o" . find-alternate-file) ; C-x C-o 绑定为 find-alternate-file（替换当前 buffer 文件）
+;;       ("C-x C-v" . read-only-mode) ; 将 C-x C-v 绑定为 read-only-mode（覆盖默认 find-file）
+;;       )
 
 
 

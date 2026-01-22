@@ -4,11 +4,11 @@
 
 (use-package gptel
   :ensure t
-  ;; :bind
-  ;; (:map global-map
-  ;;       ("C-c ." . gptel-send)
+  :bind
+  (:map global-map
+        ("C-c g" . gptel)        
+        ("C-c RET" . gptel-send))
   ;;       ("C-c ," . gptel-menu)
-  ;;       ("C-c g" . gptel))
   
   :config
   (require 'gptel-integrations)

@@ -2,6 +2,32 @@
 ;;; Commentary:
 ;;; Code:
 
+(use-package restart-emacs
+  :ensure t
+  ;; (defvar 1043/restart-emacs-map (make-sparse-keymap)
+  ;;   "Keymap for `restart-emacs'.")
+  ;; (which-key-add-key-based-replacements "C-c C-q" "restart-emacs")
+  ;; :bind-keymap ("C-c C-q" . 1043/restart-emacs-map)
+  ;; :bind (:map kaladin/restart-emacs-map
+  ;;             ("c" . restart-emacs)
+  ;;             ("d" . kaladin/restart-emacs-with-debug)
+  ;;             ("q" . kaladin/restart-emacs-with-Q)
+  ;;             ("a" . kaladin/restart-emacs-with-args)))
+  :config
+  (defun lou/restart-emacs-with-debug ()
+    "Restart Emacs with --debug-init."
+    (interactive)
+    (restart-emacs '("--debug-init")))
+  (defun lou/restart-emacs-with-Q ()
+    "Restart Emacs with -Q."
+    (interactive)
+    (restart-emacs '("-Q")))
+  (defun lou/restart-emacs-with-args ()
+    "Restart Emacs with arguments provided by user."
+    (interactive)
+    (let ((args (read-string "Enter startup args: ")))
+      (restart-emacs (split-string-and-unquote args)))))
+
 (use-package async
   :ensure t
   :config
@@ -14,17 +40,6 @@
 
 (use-package inheritenv
   :ensure t)
-
-(use-package atomic-chrome
-  :ensure t
-  :config
-  ;; (setq atomic-chrome-url-major-mode-alist
-  ;;     '(("github\\.com" . gfm-mode)
-  ;;       ("redmine" . textile-mode)))
-  (setq atomic-chrome-buffer-open-style 'frame)
-  (setq atomic-chrome-default-major-mode 'text-mode)
-  (setq atomic-chrome-enable-auto-update t)
-  (atomic-chrome-start-server))
 
 (use-package daemons
   :ensure t
@@ -117,6 +132,7 @@
 
 (use-package wakatime-mode
   :ensure t
+  :delight
   :config
   ;; 学习如何配置 .wakatime .wakatime-project
   (global-wakatime-mode +1))
@@ -135,6 +151,17 @@
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'ewth-mode)
     (add-hook 'after-init-hook #'ewth-mode)))
+
+(use-package atomic-chrome
+  :ensure t
+  :config
+  ;; (setq atomic-chrome-url-major-mode-alist
+  ;;     '(("github\\.com" . gfm-mode)
+  ;;       ("redmine" . textile-mode)))
+  (setq atomic-chrome-buffer-open-style 'frame)
+  (setq atomic-chrome-default-major-mode 'text-mode)
+  (setq atomic-chrome-enable-auto-update t)
+  (atomic-chrome-start-server))
 
 (use-package marginalia
   :ensure t

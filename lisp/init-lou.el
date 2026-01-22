@@ -31,7 +31,7 @@
     (setq url-proxy-services
           `(("http"  . ,http-proxy-full-url)
             ("https" . ,https-proxy-full-url)))
-        (message "HTTP/HTTPS 代理已启用 (HTTP->%s, HTTPS->%s)" http-proxy-full-url https-proxy-full-url)))
+    (message "HTTP/HTTPS 代理已启用 (HTTP->%s, HTTPS->%s)" http-proxy-full-url https-proxy-full-url)))
 
 (defun lou/enable-socks-proxy ()
   "启用 SOCKS 代理。"
@@ -62,7 +62,7 @@
   (if url-proxy-services
       (progn
         (message "[HTTS] 已启用:")
-                (let ((http-proxy-full-url (assoc "http" url-proxy-services))
+        (let ((http-proxy-full-url (assoc "http" url-proxy-services))
               (https-proxy-full-url (assoc "https" url-proxy-services)))
           (when http-proxy-full-url (message "HTTP: %s" (cdr http-proxy-full-url)))
           (when https-proxy-full-url (message "HTTPS: %s" (cdr https-proxy-full-url)))))
@@ -90,22 +90,22 @@
   (let ((response-buffer (url-retrieve-synchronously lou/check-proxy-ip-url)))
     (if (not response-buffer)
         (message "请求失败：无法连接到 %s ，请检查网络或代理设置。" lou/check-proxy-ip-url)
-        (with-current-buffer response-buffer
-          (goto-char (point-min))
-          (if (search-forward "\n\n" nil t)
-              (condition-case err
-                  (let* ((json-object-type 'hash-table)
-                         (json-data (json-read))
-                         (ip       (gethash "ip" json-data))
-                         (city     (gethash "city" json-data))
-                         (region   (gethash "region" json-data))
-                         (country  (gethash "country" json-data))
-                         (timezone (gethash "timezone" json-data)))
-                    (message "网络身份报告:\n----------------\nIP 地址 : %s\n位置    : %s, %s, %s\n时区    : %s"
-                             ip city region country timezone))
-                (json-error (message "JSON 解析错误: %s" err)))
-            (message "数据格式错误：无法找到 JSON 内容起始点"))
-          (kill-buffer response-buffer)))))
+      (with-current-buffer response-buffer
+        (goto-char (point-min))
+        (if (search-forward "\n\n" nil t)
+            (condition-case err
+                (let* ((json-object-type 'hash-table)
+                       (json-data (json-read))
+                       (ip       (gethash "ip" json-data))
+                       (city     (gethash "city" json-data))
+                       (region   (gethash "region" json-data))
+                       (country  (gethash "country" json-data))
+                       (timezone (gethash "timezone" json-data)))
+                  (message "网络身份报告:\n----------------\nIP 地址 : %s\n位置    : %s, %s, %s\n时区    : %s"
+                           ip city region country timezone))
+              (json-error (message "JSON 解析错误: %s" err)))
+          (message "数据格式错误：无法找到 JSON 内容起始点"))
+        (kill-buffer response-buffer)))))
 
 (defun lou/check-proxy-latency ()
   (interactive)

@@ -2,9 +2,9 @@
 ;;; Commentary:
 ;;; Code:
 
-
 (use-package apheleia
   :ensure t
+  :delight
   :config
   ;; which formatter to use
   (setf (alist-get 'python-mode apheleia-mode-alist) 'ruff)
