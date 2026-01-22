@@ -5,6 +5,7 @@
 
 (use-package eglot
   :ensure nil                    ;; eglot 是内置的，不需要额外下载
+  :if (1043/enable-eglot-p)
   ;; :bind
   ;; eglot
   ;; eglot-reconnect

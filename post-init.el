@@ -24,7 +24,8 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 (update-load-path '("lisp" "os-lisp" "site-lisp" "lisp/core"))
 
-
+;; User Custom
+(load custom-file 'noerror 'no-message)
 
 ;; Personalized customization.
 (require 'init-1043)
@@ -43,8 +44,10 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (setq lou/socks-proxy-version "5")
 
 ;; Select Module.
-(setq 1043/completion-backend 'lsp-bridge)
+;; (setq 1043/completion-backend 'lsp-bridge)
+(setq 1043/completion-backend 'lsp-proxy)
 ;; (setq 1043/completion-backend 'eglot)
+
 (setq 1043/file-manager 'dired)
 (setq 1043/themes 'modus-themes)
 
@@ -53,6 +56,8 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-vertico)
 (require 'init-corfu)
 (require 'init-lsp-bridge)
+(require 'init-lsp-proxy)
+(require 'init-apheleia)
 
 
 ;; ;; 英文
@@ -133,14 +138,14 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
   (unless (server-running-p)
     (if (boundp 'elpaca-after-init-hook)
         (add-hook 'elpaca-after-init-hook #'server-start)
-    (add-hook 'after-init-hook #'server-start))))
+      (add-hook 'after-init-hook #'server-start))))
 
 
 
 
 
 
-         
+
 
 ;; word-wrap t： 启用单词换行，即在空白处换行而不是单词中间。
 ;; truncate-lines t： 默认启用行截断（不自动换行）。这与 word-wrap t 结合使用，意味着如果一行太长，它会被截断，但如果你手动启用 visual-line-mode，它会在单词边界换行。

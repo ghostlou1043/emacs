@@ -85,6 +85,12 @@
 (use-package emacsql
   :ensure t)
 
+(use-package keycast
+  :ensure t)
+
+(use-package jsonrpc
+  :ensure t)
+
 (use-package posframe
   :ensure t)
 
@@ -95,9 +101,6 @@
   :ensure t)
 
 (use-package with-editor
-  :ensure t)
-
-(use-package keycast
   :ensure t)
 
 (use-package nerd-icons
@@ -121,15 +124,22 @@
 (use-package rainbow-identifiers
   :ensure t)
 
-
-
+(use-package ewth
+  :ensure (ewth
+           :host github
+           :repo "ISouthRain/ewth.el")
+  :if 1043/location
+  :config
+  (setq ewth-url (format "http://wttr.in/%s?format=1" 1043/location))
+  (setq ewth-update-interval 1800)
+  (if (boundp 'elpaca-after-init-hook)
+      (add-hook 'elpaca-after-init-hook #'ewth-mode)
+    (add-hook 'after-init-hook #'ewth-mode)))
 
 (use-package marginalia
   :ensure t
   :config
   (marginalia-mode +1))
-
-
 
 (use-package helpful
   :ensure t

@@ -6,6 +6,30 @@
       user-mail-address "ghostlou1043@gmail.com"
       auth-sources '("~/.authinfo.gpg"))
 
+(defcustom 1043/location nil
+  "存储用户的位置信息。"
+  :group 'user
+  :type 'string)
+
+(defun 1043/location-p ()
+  "检查 1043/location 是否已设置。
+若不存在或为空，则提示用户输入，并保存到 custom.el。"
+  (interactive) ;; 让这个函数可以通过 M-x 调用
+  (if (and (boundp '1043/location)    ;; 检查变量是否存在
+           1043/location              ;; 检查变量是否不为 nil
+           (not (string= 1043/location ""))) ;; 检查变量是否不为空字符串
+      
+      ;; 情况 A: 变量已经设置好了
+      (message "当前位置已设置为: %s" 1043/location)
+    
+    ;; 情况 B: 变量未设置，需要询问并保存
+    (let ((user-input (read-string "1043/location 未设置，请输入位置: ")))
+      ;; 核心魔法：customize-save-variable
+      ;; 这个函数不仅会设置变量的值，还会自动把它写入你的 custom.el 文件
+      (customize-save-variable '1043/location user-input)
+      (message "已保存位置: %s 到 custom.el" user-input))))
+
+
 ;; Authinfo Emacs
 (defvar 1043/authinfo t)
 (defun 1043/enable-authinfo-p ()
@@ -154,16 +178,16 @@
 
 (defun 1043/update-emoji-rescale ()
   "Update emoji font rescale according to current default font height."
-    (when (member "Noto Color Emoji" 1043/font-family-list)
-      (setq face-font-rescale-alist
-            (seq-remove (lambda (entry)
-                          (let ((font-pattern (car entry)))
-                            (and (fontp font-pattern)
-                                 (string-equal (font-get font-pattern :family) "Noto Color Emoji"))))
-                        face-font-rescale-alist)))
-    (add-to-list 'face-font-rescale-alist
-                 (cons (font-spec :family "Noto Color Emoji") (1043/get-emoji-rescale))
-                 t))
+  (when (member "Noto Color Emoji" 1043/font-family-list)
+    (setq face-font-rescale-alist
+          (seq-remove (lambda (entry)
+                        (let ((font-pattern (car entry)))
+                          (and (fontp font-pattern)
+                               (string-equal (font-get font-pattern :family) "Noto Color Emoji"))))
+                      face-font-rescale-alist)))
+  (add-to-list 'face-font-rescale-alist
+               (cons (font-spec :family "Noto Color Emoji") (1043/get-emoji-rescale))
+               t))
 
 (defun 1043/redraw-emoji-mono () ;; fontaine-set-preset-hook
   (1043/get-emoji-rescale)

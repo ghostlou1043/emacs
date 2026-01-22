@@ -1,0 +1,31 @@
+[language-server]
+pyright = { command = "pyright-langserver", args = [
+  "--stdio",
+], config = {} }
+
+ty = { command = "ty", args = [
+  "server",
+], config = {} }
+
+[[language]]
+name = "python"
+language-id = "python"
+file-types = [
+  "py",
+  "pyi",
+  "py3",
+  "pyw",
+  "ptl",
+  "rpy",
+  "cpy",
+  "ipy",
+  "pyt",
+  { glob = ".python_history" },
+  { glob = ".pythonstartup" },
+  { glob = ".pythonrc" },
+  { glob = "SConstruct" },
+  { glob = "SConscript" },
+]
+roots = [".git", "pyproject.toml", "setup.py", "poetry.lock", "pyrightconfig.json", "requirements.txt"]
+# language-servers = ["pyright"]
+language-servers = ["ty"]

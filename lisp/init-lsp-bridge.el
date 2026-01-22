@@ -11,7 +11,7 @@
   :if (1043/enable-lsp-bridge-p)
   :config
   (setq lsp-bridge-python-command
-        (expand-file-name "~/.config/emacs/lsp-bridge/.venv/bin/python"))
+        (expand-file-name "lsp-bridge/.venv/bin/python" user-emacs-directory))
   (setq acm-candidate-match-function 'orderless-flex)
   
   (setq lsp-bridge-python-lsp-server "ty")

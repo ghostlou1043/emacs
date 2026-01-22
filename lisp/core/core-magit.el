@@ -19,6 +19,23 @@
   (setq magit-refresh-status-buffer t)  ;; 非必要不设置为 nil 以提高性能
   (setq magit-view-git-manual-method 'woman))
 
+(use-package magit-gptcommit
+  :ensure t
+  :after magit
+  :init
+  (require 'llm-openai)
+  :bind (:map git-commit-mode-map
+              ("C-c C-g" . magit-gptcommit-commit-accept))
+  :config
+  (setq magit-gptcommit-llm-provider (make-llm-openai-compatible
+                                      :url "https://back.zaiwenai.com/api/v1/ai/"
+                                      :chat-model "Gemini-3.0-Flash"
+                                      :key (plist-get (car (auth-source-search :host "back.zaiwenai.com")) :secret)))
+  (setq llm-warn-on-nonfree nil)
+
+  (magit-gptcommit-mode 1)
+  (magit-gptcommit-status-buffer-setup))
+
 ;; (setq magit-submodule-list-columns
 ;;       '(("Name" 25 magit-submodule-name)
 ;;         ("Path" 40 magit-submodule-path)

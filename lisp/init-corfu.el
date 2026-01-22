@@ -29,6 +29,7 @@
   (setq corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   (setq corfu-preview-current 'insert)
 
+
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
@@ -57,14 +58,41 @@
   ;;                       completion-category-overrides nil
   ;;                       ;; completion-category-defaults nil
   ;;                       )))
-  )
+
+  (setq corfu-echo-delay '(0.3 . 0.3))
+  (setq corfu-popupinfo-delay '(0.3 . 0.3))
+  (corfu-echo-mode +1)
+  (corfu-history-mode +1)
+  (corfu-popupinfo-mode +1))
 
 ;; 提供 corfu 候选项图标
 (use-package nerd-icons-corfu
   :ensure t
   :unless (1043/enable-lsp-bridge-p)
   :after corfu
+  ;; :init
+  ;; (cl-loop for range in '((#xe000 . #xf8ff) (#xf0000 . #xfffff))
+  ;;    return (set-fontset-font t range "IosevkaTerm Nerd Font Mono"))
   :config
+
+;;   (defun nerd-icons-corfu-formatter (_)
+;;   "A margin formatter for Corfu, adding icons.
+;; 
+;; It receives METADATA, ignores it, and outputs a function that takes a candidate
+;; and returns the icon."
+;;   (and-let* ((kindfunc (plist-get completion-extra-properties :company-kind)))
+;;     (lambda (cand)
+;;       (let* ((result (funcall kindfunc cand))
+;;              (kind (if (stringp result) (intern (downcase result)) result))
+;;              (glyph (nerd-icons-corfu--get-by-kind kind cand)))
+;;         (concat
+;;          (and (display-graphic-p) nerd-icons-corfu--space)
+;;          glyph
+;;          nerd-icons-corfu--space)))))
+  
+   ;; (setq nerd-icons-corfu-mapping
+   ;;      '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+   ;;        (Function :style "cod" :icon "symbol_method" :face font-lock-function-name-face)))
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; 提供额外的补全源
