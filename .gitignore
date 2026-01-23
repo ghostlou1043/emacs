@@ -36,3 +36,4 @@ custom.el
 /lsp-proxy/node_modules/
 /lsp-proxy/package.json
 /request/
+/projects.eld

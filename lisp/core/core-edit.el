@@ -13,53 +13,55 @@
   :ensure nil
   :bind
   ((:map global-map
-              ("C-e" . move-end-of-line)
-              ("C-l" . recenter-top-bottom)
-              ("C-x h" . mark-whole-buffer)
+         ("C-e" . move-end-of-line)
+         ("C-l" . recenter-top-bottom)
+         ("C-x h" . mark-whole-buffer)
 
-              ("C-d" . kill-word)
-              ("M-d" . backward-kill-word)
+         ("C-d" . kill-word)
+         ("M-d" . backward-kill-word)
 
-              ("C-t" . transpose-chars)
-              ("M-t" . transpose-words)
-              ("C-x C-t" . transpose-lines)
+         ("C-t" . transpose-chars)
+         ("M-t" . transpose-words)
+         ("C-x C-t" . transpose-lines)
 
-              ("C-v" . scroll-up-command)
-              ("M-v" . scroll-down-command)
-              
-              ("C-;" . comment-set-column)
-              ("M-;" . comment-dwim)
-              ("C-x C-;" . comment-line)
+         ("C-v" . scroll-up-command)
+         ("M-v" . scroll-down-command)
 
-              ;; "IO" auto input BUG
-              ;; ("M-[" . forward-paragraph)  
-              ;; ("M-]" . backward-paragraph)
-              
-              ("M-b" . backward-word)
-              ("M-f" . forward-word)
+         ("C-'" . hippie-expand)
 
-              ("M-=" . what-cursor-position)
-              ("M-'" . hippie-expand)
-              ("M-c" . capitalize-dwim)
-              ("M-u" . upcase-dwim)
-              ("M-l" . downcase-dwim)
-              ("M-\\" . move-to-window-line-top-bottom)
-              
-              ("C-x -" . shrink-window-if-larger-than-buffer)
-              ("C-x =" . balance-windows)
-              ("C-x +" . balance-windows)
-              
-              ("C-c -" . shrink-window-if-larger-than-buffer)
-              ("C-c =" . balance-windows)
-              ("C-c +" . balance-windows)
-              
-              ("C-x C--" . text-scale-adjust)
-              ("C-x C-=" . text-scale-adjust)
-              ("C-x C-+" . text-scale-adjust)
-              ("C-c C--" . text-scale-adjust)
-              ("C-c C-=" . text-scale-adjust)
-              ("C-c C-+" . text-scale-adjust)
-              ))
+         ("C-c ;" . comment-set-column)
+         ("C-x ;" . comment-dwim)
+         ("C-x C-;" . comment-line)
+
+         ;; "IO" auto input BUG
+         ;; ("M-[" . forward-paragraph)
+         ;; ("M-]" . backward-paragraph)
+
+         ("M-b" . backward-word)
+         ("M-f" . forward-word)
+
+         ("M-=" . what-cursor-position)
+
+         ("M-c" . capitalize-dwim)
+         ("M-u" . upcase-dwim)
+         ("M-l" . downcase-dwim)
+         ("M-\\" . move-to-window-line-top-bottom)
+
+         ("C-x -" . shrink-window-if-larger-than-buffer)
+         ("C-x =" . balance-windows)
+         ("C-x +" . balance-windows)
+
+         ("C-c -" . shrink-window-if-larger-than-buffer)
+         ("C-c =" . balance-windows)
+         ("C-c +" . balance-windows)
+
+         ("C-x C--" . text-scale-adjust)
+         ("C-x C-=" . text-scale-adjust)
+         ("C-x C-+" . text-scale-adjust)
+         ("C-c C--" . text-scale-adjust)
+         ("C-c C-=" . text-scale-adjust)
+         ("C-c C-+" . text-scale-adjust)
+         ))
   :config
   (repeat-mode +1)
   (delete-selection-mode +1)
@@ -113,10 +115,12 @@
   (:map global-map
         ("C-k" . lou/crux-smart-kill-line)
         ("C-a" . crux-move-beginning-of-line)
-        ("C-'" . crux-duplicate-current-line-or-region)
+        ("C-;" . crux-duplicate-current-line-or-region)
+        ("M-;" . crux-duplicate-and-comment-current-line-or-region)
+
         ("C-x C-d" . crux-delete-file-and-buffer)
         ("C-x C-r" . crux-rename-buffer-and-file)
-        ("C-c C-;" . crux-duplicate-and-comment-current-line-or-region)
+
         ("M-j" . crux-top-join-line)
 
         ;; ("M-k" . crux-kill-other-buffers)
@@ -238,9 +242,14 @@
 (use-package anzu
   :ensure t
   :bind
-  (:map global-map
-        ("C-r" . anzu-query-replace)
-        ("M-r" . anzu-query-replace-regexp))
+  ((:map global-map
+         ("M-q" . anzu-query-replace)
+         ("M-r" . anzu-query-replace-regexp))
+   (:map isearch-mode-map
+         ("M-t" . isearch-toggle-regexp)
+         ("M-q" . anzu-isearch-query-replace)
+         ("M-r" . anzu-isearch-query-replace-regexp)
+         ))
   :config
   (setq anzu-mode-lighter "")
   (setq anzu-deactivate-region nil)
@@ -372,9 +381,9 @@
   (:map global-map
         ("C-j" . avy-goto-char-timer))
   :config
-   ;; 只在当前窗口中跳转
+  ;; 只在当前窗口中跳转
   (setq avy-all-windows t)
-   ;; 设置背景暗化，以便更容易看到avy标签
+  ;; 设置背景暗化，以便更容易看到avy标签
   (setq avy-background t))
 
 (use-package ace-pinyin

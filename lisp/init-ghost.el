@@ -39,17 +39,15 @@
   (setq tab-always-indent 'complete) ; 按 tab 时尝试缩进，若缩进无变化则尝试补全 init.el
   ;; (setq tab-first-completion 'word-or-paren-or-punct) ;; init.el
   (setq tab-first-completion nil) ;; 如上配置会导致光标在括号前需按 2 次 TAB 键才弹出 corfu
-  
+
 
   (setq text-mode-ispell-word-completion nil)
-
   (setq read-extended-command-predicate #'command-completion-default-include-p) ;; init.el
 
   ;; minibuffer
   (setq minibuffer-prompt-properties
         '(read-only t intangible t cursor-intangible t face minibuffer-prompt))  ;; init.el
-  ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
-  (setq-default enable-recursive-minibuffers t)
+  (setq-default enable-recursive-minibuffers t)   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
 
   ;; 启用像素滚动
   (when (fboundp 'pixel-scroll-precision-mode)
@@ -60,7 +58,15 @@
   (setq mode-line-collapse-minor-modes-to "")
   (setq mode-line-collapse-minor-modes
         '(apheleia-mode
-          yas-minor-mode)))
+          yas-minor-mode))
+
+  ;; 行号
+  (setq display-line-numbers-type 'relative)
+
+  :hook ((emacs-lisp-mode . display-line-numbers-mode)
+         (text-mode . display-line-numbers-mode)
+         (prog-mode . display-line-numbers-mode))
+  )
 
 ;; :bind
 ;; (:map global-map
