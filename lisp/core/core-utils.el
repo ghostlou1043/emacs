@@ -52,8 +52,13 @@
 
 ;; need mplayer
 (use-package nyan-mode
-  :ensure t
+  :ensure (nyan-mode
+           :host github
+           :repo "zakudriver/nyan-mode"
+           :files ("nyan-mode.el" "img" "mus")
+           )
   :config
+  (setq nyan-cat-face-number 1)
   (setq nyan-animate-nyancat t)
   (setq nyan-animation-frame-interval 0.2)
   (setq nyan-bar-length 32)
