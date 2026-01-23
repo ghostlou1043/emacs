@@ -55,9 +55,12 @@
   (when (fboundp 'pixel-scroll-precision-mode)
     (pixel-scroll-precision-mode)) ; 启用更平滑的像素精度滚动模式（如果可用）
 
-  )
-
-
+  ;; mode-line
+  ;; (setq mode-line-collapse-minor-modes-to " …")
+  (setq mode-line-collapse-minor-modes-to "")
+  (setq mode-line-collapse-minor-modes
+        '(apheleia-mode
+          yas-minor-mode)))
 
 ;; :bind
 ;; (:map global-map

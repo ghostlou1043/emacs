@@ -7,6 +7,7 @@
            :host github
            :repo "roife/emt"
            :files ("*.el" "module/*" "module"))
+  :delight
   :config
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'emt-mode)
