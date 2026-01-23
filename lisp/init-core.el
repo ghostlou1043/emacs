@@ -21,6 +21,7 @@
 (require 'core-yasnippet)
 (require 'core-gptel)
 (require 'core-tramp)
+(require 'core-project)
 (require 'core-consult)
 
 

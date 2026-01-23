@@ -2,6 +2,14 @@
 ;;; Commentary:
 ;;; Code:
 
+(use-package rg
+  :ensure t
+  :bind (:map global-map
+              ("C-c s" . rg-menu)))
+
+(use-package wgrep
+  :ensure t)
+
 (use-package consult
   :ensure t
   :bind
@@ -56,16 +64,16 @@
   (advice-add #'register-preview :override #'consult-register-window)
 
   ;; xref
-  ;; (setq xref-show-xrefs-function #'consult-xref
-  ;;       xref-show-definitions-function #'consult-xref)
+  (setq xref-show-xrefs-function #'consult-xref)
+  (setq xref-show-definitions-function #'consult-xref)
 
   ;; 实时预览与编辑
   ;; consult-preview-allowed-hooks 预览时会禁用大多数 mode 配置此变量以设置白名单
   (setq consult-preview-key (list :debounce 0.5 'any))
 
   ;; 项目搜索
-  ;; (autoload 'projectile-project-root "projectile")
-  ;; (setq consult-project-function (lambda (_) (projectile-project-root)))
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-function (lambda (_) (projectile-project-root)))
 
   ;; wgrep
 

@@ -61,7 +61,7 @@
 
   (setq corfu-echo-delay '(0.3 . 0.3))
   (setq corfu-popupinfo-delay '(0.3 . 0.3))
-  (corfu-echo-mode +1)
+  ;; (corfu-echo-mode +1)
   (corfu-history-mode +1)
   (corfu-popupinfo-mode +1))
 
@@ -75,24 +75,24 @@
   ;;    return (set-fontset-font t range "IosevkaTerm Nerd Font Mono"))
   :config
 
-;;   (defun nerd-icons-corfu-formatter (_)
-;;   "A margin formatter for Corfu, adding icons.
-;; 
-;; It receives METADATA, ignores it, and outputs a function that takes a candidate
-;; and returns the icon."
-;;   (and-let* ((kindfunc (plist-get completion-extra-properties :company-kind)))
-;;     (lambda (cand)
-;;       (let* ((result (funcall kindfunc cand))
-;;              (kind (if (stringp result) (intern (downcase result)) result))
-;;              (glyph (nerd-icons-corfu--get-by-kind kind cand)))
-;;         (concat
-;;          (and (display-graphic-p) nerd-icons-corfu--space)
-;;          glyph
-;;          nerd-icons-corfu--space)))))
+  ;;   (defun nerd-icons-corfu-formatter (_)
+  ;;   "A margin formatter for Corfu, adding icons.
+  ;; 
+  ;; It receives METADATA, ignores it, and outputs a function that takes a candidate
+  ;; and returns the icon."
+  ;;   (and-let* ((kindfunc (plist-get completion-extra-properties :company-kind)))
+  ;;     (lambda (cand)
+  ;;       (let* ((result (funcall kindfunc cand))
+  ;;              (kind (if (stringp result) (intern (downcase result)) result))
+  ;;              (glyph (nerd-icons-corfu--get-by-kind kind cand)))
+  ;;         (concat
+  ;;          (and (display-graphic-p) nerd-icons-corfu--space)
+  ;;          glyph
+  ;;          nerd-icons-corfu--space)))))
   
-   ;; (setq nerd-icons-corfu-mapping
-   ;;      '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
-   ;;        (Function :style "cod" :icon "symbol_method" :face font-lock-function-name-face)))
+  ;; (setq nerd-icons-corfu-mapping
+  ;;      '((array :style "cod" :icon "symbol_array" :face font-lock-type-face)
+  ;;        (Function :style "cod" :icon "symbol_method" :face font-lock-function-name-face)))
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; 提供额外的补全源

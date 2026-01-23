@@ -37,3 +37,5 @@ custom.el
 /lsp-proxy/package.json
 /request/
 /projects.eld
+/projectile-bookmarks.eld
+/.projectile-cache.eld

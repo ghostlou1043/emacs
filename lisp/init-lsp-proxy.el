@@ -8,6 +8,10 @@
            :repo "jadestrong/lsp-proxy"
            :files ("*.el"))
   :if(1043/enable-lsp-proxy-p)
+  :bind (:map lsp-proxy-mode-map
+              ("M-." . lsp-proxy-find-definition)
+              ("M-?" . lsp-proxy-find-references)
+              )
   :init
   (setq lsp-proxy--exec-file
         (expand-file-name "lsp-proxy/node_modules/.bin/emacs-lsp-proxy" user-emacs-directory))
