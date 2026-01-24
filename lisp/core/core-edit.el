@@ -27,7 +27,7 @@
          ("C-v" . scroll-up-command)
          ("M-v" . scroll-down-command)
 
-         ("C-'" . hippie-expand)
+         ;; ("C-'" . hippie-expand)
 
          ("C-c ;" . comment-set-column)
          ("C-x ;" . comment-dwim)

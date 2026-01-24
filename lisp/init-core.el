@@ -23,6 +23,7 @@
 (require 'core-tramp)
 (require 'core-project)
 (require 'core-consult)
+(require 'core-embark)
 
 
 

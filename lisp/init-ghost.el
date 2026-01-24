@@ -58,7 +58,8 @@
   (setq mode-line-collapse-minor-modes-to "")
   (setq mode-line-collapse-minor-modes
         '(apheleia-mode
-          yas-minor-mode))
+          yas-minor-mode
+          ))
 
   ;; 行号
   (setq display-line-numbers-type 'relative)

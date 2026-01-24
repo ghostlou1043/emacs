@@ -8,11 +8,11 @@
            :repo "roife/emt"
            :files ("*.el" "module/*" "module"))
   :delight
-  :config
+  :init
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'emt-mode)
     (add-hook 'after-init-hook #'emt-mode))
-  
+  :config
   (setq emt-use-cache t)
   (setq emt-cache-lru-size 50)
   ;; https://github.com/Master-Hash/ewt-rs

@@ -9,6 +9,9 @@
   (which-key-add-key-based-replacements "C-x p" "Projectile")
   (setq projectile-project-search-path '("~/nixos-config/" "~/.config/emacs/"))
   ;; (setq projectile-project-search-path '("~/projects/" "~/work/" ("~/github" . 1)))
+  (if (boundp 'elpaca-after-init-hook)
+      (add-hook 'elpaca-after-init-hook #'projectile-mode)
+    (add-hook 'after-init-hook #'projectile-mode))
   :config
   (setq projectile-auto-discover nil)
   (setq projectile-cleanup-known-projects nil) ;; 为了 tramp 不自动清理
@@ -36,12 +39,13 @@
   ;; 对于经常需要在切换项目时调用不同操作的人来说，这是推荐选项
   (setq projectile-switch-project-action 'projectile-commander)
 
-  ;; (setq projectile-mode-line-prefix " P") ;; projectile-mode-line-function 自定义输出，prefix 选项无用
+  (setq projectile-mode-line-prefix " Proj") ;; projectile-mode-line-function 自定义输出，prefix 选项对其无效
   (setq projectile-dynamic-mode-line t)
-  (setq projectile-mode-line-function '(lambda () (format " P[%s]" (projectile-project-name))))
-  
-  (add-hook 'project-find-functions #'project-projectile)
-  (projectile-mode +1))
+  (setq projectile-mode-line-function '(lambda () (format " Proj[%s]" (projectile-project-name))))
+
+  (add-hook 'project-find-functions #'project-projectile))
+
+
 
 (provide 'core-project)
 

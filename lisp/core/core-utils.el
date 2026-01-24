@@ -76,11 +76,11 @@
 
 (use-package envrc
   :ensure t
-  :config
+  :init
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'envrc-global-mode)
     (add-hook 'after-init-hook #'envrc-global-mode))
-
+  :config
   ;; 静默启动，不显示详细加载信息
   (setq envrc-show-summary-in-minibuffer t))
 
@@ -150,12 +150,14 @@
            :host github
            :repo "ISouthRain/ewth.el")
   :if 1043/location
-  :config
-  (setq ewth-url (format "http://wttr.in/%s?format=1" 1043/location))
-  (setq ewth-update-interval 1800)
+  :init
   (if (boundp 'elpaca-after-init-hook)
       (add-hook 'elpaca-after-init-hook #'ewth-mode)
-    (add-hook 'after-init-hook #'ewth-mode)))
+    (add-hook 'after-init-hook #'ewth-mode))
+  :config
+  (setq ewth-url (format "http://wttr.in/%s?format=1" 1043/location))
+  (setq ewth-update-interval 1800))
+
 
 (use-package atomic-chrome
   :ensure t

@@ -8,10 +8,21 @@
               ("C-c s" . rg-menu)))
 
 (use-package wgrep
-  :ensure t)
+  :ensure t
+  :config
+  ;; To save all buffers that wgrep has changed, run
+  ;; M-x wgrep-save-all-buffers
+  (setq wgrep-auto-save-buffer nil)
+  (setq wgrep-change-readonly-file nil))
 
 (use-package consult
   :ensure t
+  :init
+  (defvar 1043/consult-map (make-sparse-keymap)
+    "Keymap for `consult'.")
+  (which-key-add-key-based-replacements "C-x c" "consult")
+  :bind-keymap
+  ("C-x c" . 1043/consult-map)
   :bind
   ((:map global-map
          ("C-r" . consult-ripgrep)
@@ -26,27 +37,26 @@
          ("C-x s" . consult-register-store)
 
          ("C-x C-k" . consult-kmacro) ;; 原快捷键功能 kmacro-keymap
-         ("C-x C-b" . consult-project-buffer)         ; 使用 consult-buffer 替代默认的缓冲区切换命令
-
-         ;; consult-goto-line     j
-         ;; consult-mark          m
-         ;; consult-global-mark   g
-         ;; consult-outline       o
-         ;; consult-imenu-multi   i
-         ;; consult-line-multi    l
-         ;; consult-keep-lines    d
-         ;; consult-focus-lines   n
-         ;; consult-fd            f
-         ;; consult-org-agenda    a
-         ;; consult-man           h
-         ;; consult-info          .
-         ;; consult-theme         t
-         ;; consult-complex-command  c  ;; 重复复杂的命令
-
-
-         ;; consult-history             ;; 终端或 minibuffer 等特殊区域 map 使用 可以由 cape-history 替代
-
-         )
+         ("C-x C-b" . consult-project-buffer))         ; 使用 consult-buffer 替代默认的缓冲区切换命令
+   (:map 1043/consult-map
+         ("j" . consult-goto-line)     
+         ("m" . consult-mark)          
+         ("g" . consult-global-mark)   
+         ("o" . consult-outline)       
+         ("i" . consult-imenu-multi)   
+         ("l" . consult-line-multi)    
+         ("d" . consult-keep-lines)    
+         ("n" . consult-focus-lines)   
+         ("f" . consult-fd)            
+         ("a" . consult-org-agenda)    
+         ("h" . consult-man)           
+         ("." . consult-info)          
+         ("t" . consult-theme)
+         ;; 重复复杂的命令
+         ("c" . consult-complex-command))
+   ;; consult-history             ;; 终端或 minibuffer 等特殊区域 map 使用 可以由 cape-history 替代
+   ;; 可以将 consult-history 绑定到 minibuffer-local-map
+   
    (:map isearch-mode-map
          ("M-e" . consult-isearch-history)))
 
@@ -115,77 +125,6 @@
   (setq consult-preview-partial-size 1048576)
   ;; 跳转至匹配项时，总位于匹配项开头
   (setq consult-point-placement 'match-beginning))
-
-;; (use-package embark
-;;   :ensure t
-;;   ;; :bind
-;;   ;; (:map global-map
-;;   ;;       ("C-<f14>" . embark-act)         ;; pick some comfortable binding
-;;   ;;       ("<f14>" . embark-dwim))
-;;   :init
-;;   (setq prefix-help-command #'embark-prefix-help-command)
-;;
-;;   ;; Show the Embark target at point via Eldoc. You may adjust the
-;;   ;; Eldoc strategy, if you want to see the documentation from
-;;   ;; multiple providers. Beware that using this can be a little
-;;   ;; jarring since the message shown in the minibuffer can be more
-;;   ;; than one line, causing the modeline to move up and down:
-;;
-;;   ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-;;   ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
-;;
-;;   :config
-;;   ;;   (defun embark-which-key-indicator ()
-;;   ;;     "An embark indicator that displays keymaps using which-key.
-;;   ;; The which-key help message will show the type and value of the
-;;   ;; current target followed by an ellipsis if there are further
-;;   ;; targets."
-;;   ;;     (lambda (&optional keymap targets prefix)
-;;   ;;       (if (null keymap)
-;;   ;;           (which-key--hide-popup-ignore-command)
-;;   ;;         (which-key--show-keymap
-;;   ;;          (if (eq (plist-get (car targets) :type) 'embark-become)
-;;   ;;              "Become"
-;;   ;;            (format "Act on %s '%s'%s"
-;;   ;;                    (plist-get (car targets) :type)
-;;   ;;                    (embark--truncate-target (plist-get (car targets) :target))
-;;   ;;                    (if (cdr targets) "…" "")))
-;;   ;;          (if prefix
-;;   ;;              (pcase (lookup-key keymap prefix 'accept-default)
-;;   ;;                ((and (pred keymapp) km) km)
-;;   ;;                (_ (key-binding prefix 'accept-default)))
-;;   ;;            keymap)
-;;   ;;          nil nil t (lambda (binding)
-;;   ;;                      (not (string-suffix-p "-argument" (cdr binding))))))))
-;;
-;;   ;;   (setq embark-indicators
-;;   ;;         '(embark-which-key-indicator
-;;   ;;           embark-highlight-indicator
-;;   ;;           embark-isearch-highlight-indicator))
-;;
-;;   ;;   (defun embark-hide-which-key-indicator (fn &rest args)
-;;   ;;     "Hide the which-key indicator immediately when using the completing-read prompter."
-;;   ;;     (which-key--hide-popup-ignore-command)
-;;   ;;     (let ((embark-indicators
-;;   ;;            (remq #'embark-which-key-indicator embark-indicators)))
-;;   ;;       (apply fn args)))
-;;
-;;   ;;   (advice-add #'embark-completing-read-prompter
-;;   ;;               :around #'embark-hide-which-key-indicator)
-;;
-;;   ;; Hide the mode line of the Embark live/completions buffers
-;;   (add-to-list 'display-buffer-alist
-;;                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-;;                  nil
-;;                  (window-parameters (mode-line-format . none)))))
-
-;; (use-package embark-consult
-;;   :ensure t
-;;   :after (embark consult)
-;;   :hook
-;;   (embark-collect-mode . consult-preview-at-point-mode))
-
-
 
 (provide 'core-consult)
 
