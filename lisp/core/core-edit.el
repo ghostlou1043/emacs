@@ -109,6 +109,41 @@
 
   (undo-fu-session-global-mode +1))
 
+(use-package symbol-overlay
+  :ensure t
+  :bind-keymap
+  ("C-o" . symbol-overlay-map)
+  :bind
+  ((:map global-map
+         ;; 自动高亮模式（光标移动自动高亮）
+         ("<f8>" . symbol-overlay-mode)
+         )
+   (:map symbol-overlay-map
+         ("i" . symbol-overlay-put) ;; 高亮/取消高亮当前符号
+         ("c" . symbol-overlay-count) ;; 计算当前光标所在高亮符号的出现次数
+         ("r" . symbol-overlay-rename)
+         ("q" . symbol-overlay-query-replace)
+         ("t" . symbol-overlay-toggle-in-scope)  ;; 可以在"全文高亮"和"函数内高亮"之间切换
+         ("s" . symbol-overlay-isearch-literally)
+
+         ("<" . symbol-overlay-jump-first)
+         (">" . symbol-overlay-jump-last)
+         ("n" . symbol-overlay-jump-next)
+         ("p" . symbol-overlay-jump-prev)
+         ("f" . symbol-overlay-switch-forward)
+         ("b" . symbol-overlay-switch-backward) 	;; 切换到附近其他高亮符号
+
+         ("d" . symbol-overlay-jump-to-definition)
+         ("e" . symbol-overlay-echo-mark)
+         ("h" . symbol-overlay-map-help)
+
+         ("w" . symbol-overlay-save-symbol) ;; 把当前符号复制到剪贴板
+         ("a" . symbol-overlay-remove-all) 	;; 清除所有高亮
+         ))
+  :config
+  ;; 仅高亮当前显示器可见部分，非高亮整个文件，避免卡顿，后续可以通过文件行数判断设置
+  (setq symbol-overlay-displayed-window t))
+
 (use-package crux
   :ensure t
   :bind
