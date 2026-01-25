@@ -1,4 +1,4 @@
-;;; init-vertico.el --- Init Vertico -*- lexical-binding: t; -*-
+;;; core-vertico.el --- Core Vertico -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -9,6 +9,9 @@
   (setq vertico-count 10) ;; Show more candidates
   (setq vertico-resize nil) ;; Grow and shrink the Vertico minibuffer
   (setq vertico-cycle nil) ;; Enable cycling for `vertico-next/previous'
+
+  (vertico-multiform-mode)
+  (add-to-list 'vertico-multiform-categories '(embark-keybinding grid))
 
   ;; Prompt indicator for `completing-read-multiple'.
   (when (< emacs-major-version 31)
@@ -62,11 +65,11 @@
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
-(provide 'init-vertico)
+(provide 'core-vertico)
 
 ;; Local variables:
 ;; byte-compile-warnings: (not obsolete free-vars)
 ;; no-byte-compile: t
 ;; End:
 
-;;; init-vertico.el ends here
+;;; core-vertico.el ends here

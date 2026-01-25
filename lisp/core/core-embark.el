@@ -21,25 +21,56 @@
   ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
   :config
-  (setq embark-confirm-act-all t)  ;; 熟悉后可设置为 nil 取消对每项都执行命令的询问
+  ;; 熟悉后可设置为 nil 取消对每项都执行命令的询问
+  (setq embark-confirm-act-all t)
+  ;; 将 @ 快选改为 \ 快选，该项占据 `C-x \' `C-c \' `C-x C-\' `C-c C-\' `C-M-\' 及各种 前缀+\ 的快捷键
+  (setq embark-keymap-prompter-key "\\")
   ;; (setq embark-prompter 'embark-completing-read-prompter)
 
+  ;; 指定默认情况下操作不应退出 minibuffer，但使用 kill-buffer 作为操作时应退出
+  (setq embark-quit-after-action
+        '((kill-buffer . t)
+          (t . nil)))
+
+  ;; 也可以为不退出的 emabrk-act 单独定制一个函数
+  ;; (defun embark-act-noquit ()
+  ;;   "Run action but don't quit the minibuffer afterwards."
+  ;;   (interactive)
+  ;;   (let ((embark-quit-after-action nil))
+  ;;     (embark-act)))
+
+  ;; 高亮当前目标以表明 embark 对其生效
+  (setq embark-indicators
+        '(embark--vertico-indicator
+          embark-mixed-indicator
+          ;; embark-minimal-indicator
+          embark-highlight-indicator
+          embark-isearch-highlight-indicator))
+  (setq embark-mixed-indicator-delay 0.5)
+  
+  ;; keycast 
+  (with-eval-after-load 'keycast
+    (defun store-action-key+cmd (cmd)
+      (force-mode-line-update t)
+      (setq this-command cmd
+            keycast--this-command-keys (this-single-command-keys)
+            keycast--this-command-desc cmd))
+    (advice-add 'embark-keymap-prompter :filter-return #'store-action-key+cmd)
+    ;; version of keycast--update that accepts (and ignores) parameters
+    (defun force-keycast-update (&rest _) (keycast--update))
+    (advice-add 'embark-act :before #'force-keycast-update))
 
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
                  (window-parameters (mode-line-format . none)))))
-;; 高亮当前目标以表明 embark 对其生效
-;; embark-indicators
 
 ;; 模式行会显示选中目标的计数
 ;; embark-selection-indicator
 
 ;; 为某一类型提供哪些操作
 ;; embark-keymap-alist
-
-
 
 ;; 生成一个缓冲区，列出所有当前候选物，供你随意浏览并在其中执行操作。
 ;; 候选物以显示附加注释的列表形式展示。如果任何候选物包含换行符，则使用水平线来分隔候选物
@@ -54,48 +85,6 @@
 ;; embark-become 中途改变想要执行的命令，如 switch-to-buffer 发现没有 buffer 转而使用 find-file
 ;; 可以将 embark-become 绑定到 minibuffer-local-map
 ;; embark-become-keymaps ;; 最终 C-. B f 来切换到 find-file
-
-
-
-;;   (defun embark-which-key-indicator ()
-;;     "An embark indicator that displays keymaps using which-key.
-;; The which-key help message will show the type and value of the
-;; current target followed by an ellipsis if there are further
-;; targets."
-;;     (lambda (&optional keymap targets prefix)
-;;       (if (null keymap)
-;;           (which-key--hide-popup-ignore-command)
-;;         (which-key--show-keymap
-;;          (if (eq (plist-get (car targets) :type) 'embark-become)
-;;              "Become"
-;;            (format "Act on %s '%s'%s"
-;;                    (plist-get (car targets) :type)
-;;                    (embark--truncate-target (plist-get (car targets) :target))
-;;                    (if (cdr targets) "…" "")))
-;;          (if prefix
-;;              (pcase (lookup-key keymap prefix 'accept-default)
-;;                ((and (pred keymapp) km) km)
-;;                (_ (key-binding prefix 'accept-default)))
-;;            keymap)
-;;          nil nil t (lambda (binding)
-;;                      (not (string-suffix-p "-argument" (cdr binding))))))))
-
-;;   (setq embark-indicators
-;;         '(embark-which-key-indicator
-;;           embark-highlight-indicator
-;;           embark-isearch-highlight-indicator))
-
-;;   (defun embark-hide-which-key-indicator (fn &rest args)
-;;     "Hide the which-key indicator immediately when using the completing-read prompter."
-;;     (which-key--hide-popup-ignore-command)
-;;     (let ((embark-indicators
-;;            (remq #'embark-which-key-indicator embark-indicators)))
-;;       (apply fn args)))
-
-;;   (advice-add #'embark-completing-read-prompter
-;;               :around #'embark-hide-which-key-indicator)
-
-
 
 (use-package embark-consult
   :ensure t

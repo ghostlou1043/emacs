@@ -10,6 +10,7 @@
 (require 'core-themes)
 (require 'core-visual)
 (require 'core-utils)
+(require 'core-vertico)
 (require 'core-edit)
 (require 'core-meow)
 (require 'core-magit)

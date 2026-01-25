@@ -9,6 +9,21 @@
 
 (use-package wgrep
   :ensure t
+  :bind((:map grep-mode-map
+              ("C-x C-s" . wgrep-save-all-buffers)
+              ("C-x C-q" . wgrep-change-to-wgrep-mode))
+        (:map wgrep-mode-map
+              ("C-c C-c" . wgrep-finish-edit)
+              ("C-c C-k" . wgrep-abort-changes)
+
+              ("C-c C-r" . wgrep-remove-change)      ;; 待定
+              ("C-c C-u" . wgrep-remove-all-change)  ;; 待定
+
+              ("C-x C-r" . wgrep-toggle-readonly-area)
+              ("C-x C-d" . wgrep-mark-deletion)
+              ("C-x C-s" . wgrep-finish-edit)
+              ("C-x C-q" . wgrep-exit)))
+
   :config
   ;; To save all buffers that wgrep has changed, run
   ;; M-x wgrep-save-all-buffers
@@ -39,24 +54,24 @@
          ("C-x C-k" . consult-kmacro) ;; 原快捷键功能 kmacro-keymap
          ("C-x C-b" . consult-project-buffer))         ; 使用 consult-buffer 替代默认的缓冲区切换命令
    (:map 1043/consult-map
-         ("j" . consult-goto-line)     
-         ("m" . consult-mark)          
-         ("g" . consult-global-mark)   
-         ("o" . consult-outline)       
-         ("i" . consult-imenu-multi)   
-         ("l" . consult-line-multi)    
-         ("d" . consult-keep-lines)    
-         ("n" . consult-focus-lines)   
-         ("f" . consult-fd)            
-         ("a" . consult-org-agenda)    
-         ("h" . consult-man)           
-         ("." . consult-info)          
+         ("j" . consult-goto-line)
+         ("m" . consult-mark)
+         ("g" . consult-global-mark)
+         ("o" . consult-outline)
+         ("i" . consult-imenu-multi)
+         ("l" . consult-line-multi)
+         ("d" . consult-keep-lines)
+         ("n" . consult-focus-lines)
+         ("f" . consult-fd)
+         ("a" . consult-org-agenda)
+         ("h" . consult-man)
+         ("." . consult-info)
          ("t" . consult-theme)
          ;; 重复复杂的命令
          ("c" . consult-complex-command))
    ;; consult-history             ;; 终端或 minibuffer 等特殊区域 map 使用 可以由 cape-history 替代
    ;; 可以将 consult-history 绑定到 minibuffer-local-map
-   
+
    (:map isearch-mode-map
          ("M-e" . consult-isearch-history)))
 
@@ -85,7 +100,7 @@
   (autoload 'projectile-project-root "projectile")
   (setq consult-project-function (lambda (_) (projectile-project-root)))
 
-  ;; wgrep
+
 
   (consult-customize
    ;; 完全不预览主题
