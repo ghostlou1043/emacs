@@ -219,8 +219,8 @@
          ;; 根据不同的前缀选择不同的东西，正负 arg 选方向+多少，C-u 选直到当前表达式结束，
          ;; C-u C-u 选表达式全部，0 选表达式内全部
          ;; 待研究
-         ("C-c C-," . sp-select-next-thing-exchange) ;; 在结果会交换光标与 mark 的位置
-         ("C-c C-." . sp-select-next-thing)
+         ;; ("C-c C-," . sp-select-next-thing-exchange) ;; 在结果会交换光标与 mark 的位置
+         ;; ("C-c C-." . sp-select-next-thing)
 
          ("C-c a" . sp-backward-barf-sexp) ;; 把表达式扔到左边
          ("C-c e" . sp-forward-barf-sexp) ;; 把表达式扔到右边

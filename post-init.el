@@ -58,6 +58,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-lsp-proxy)
 (require 'init-apheleia)
 (require 'init-flycheck)
+(require 'init-org-modern)
 
 
 ;; ;; 英文
