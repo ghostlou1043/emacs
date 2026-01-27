@@ -50,8 +50,6 @@
   (with-eval-after-load 'meow
     (add-hook 'calfw-calendar-mode-hook  #'meow-insert-mode)))
 
-
-
 (provide 'core-calfw)
 
 ;; Local variables:

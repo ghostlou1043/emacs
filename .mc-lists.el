@@ -6,6 +6,7 @@
       '(
         crux-move-beginning-of-line
         cycle-spacing
+        emt-backward-kill-word
         indent-for-tab-command
         keyboard-quit
         lou/crux-smart-kill-line

@@ -31,6 +31,8 @@
 (require 'core-consult)
 (require 'core-embark)
 (require 'core-calfw)
+(require 'core-window)
+
 
 
 

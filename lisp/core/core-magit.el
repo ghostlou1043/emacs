@@ -61,6 +61,12 @@
   ;; (magit-gptcommit-mode +1) ;; 自动进行 gptcommit , 影响 stage
   (magit-gptcommit-status-buffer-setup))
 
+(use-package git-modes
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist
+               (cons "/.dockerignore\\'" 'gitignore-mode)))
+
 
 
 ;; (use-package magit-delta
