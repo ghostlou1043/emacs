@@ -9,10 +9,15 @@
 
 (require 'core-themes)
 (require 'core-visual)
+
 (require 'core-utils)
+
 (require 'core-vertico)
+
 (require 'core-edit)
 (require 'core-meow)
+
+
 (require 'core-magit)
 (require 'core-language)
 (require 'core-read)
@@ -25,6 +30,7 @@
 (require 'core-project)
 (require 'core-consult)
 (require 'core-embark)
+(require 'core-calfw)
 
 
 

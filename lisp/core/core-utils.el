@@ -123,6 +123,7 @@
 (use-package with-editor
   :ensure t)
 
+
 (use-package nerd-icons
   :ensure t
   :custom
@@ -145,19 +146,20 @@
 (use-package rainbow-identifiers
   :ensure t)
 
-(use-package ewth
-  :ensure (ewth
-           :host github
-           :repo "ISouthRain/ewth.el")
-  :if 1043/location
-  :init
-  (if (boundp 'elpaca-after-init-hook)
-      (add-hook 'elpaca-after-init-hook #'ewth-mode)
-    (add-hook 'after-init-hook #'ewth-mode))
-  :config
-  (setq ewth-url (format "http://wttr.in/%s?format=1" 1043/location))
-  (setq ewth-update-interval 1800))
-
+;; ------- 造成终端emacs画面错乱
+;; (use-package ewth
+;;   :ensure (ewth
+;;            :host github
+;;            :repo "ISouthRain/ewth.el")
+;;   :if 1043/location
+;;   :init
+;;   (if (boundp 'elpaca-after-init-hook)
+;;       (add-hook 'elpaca-after-init-hook #'ewth-mode)
+;;     (add-hook 'after-init-hook #'ewth-mode))
+;;   :config
+;;   (setq ewth-url (format "http://wttr.in/%s?format=1" 1043/location))
+;;   (setq ewth-update-interval 1800))
+;; -------
 
 (use-package atomic-chrome
   :ensure t
@@ -184,7 +186,6 @@
         ("C-h k" . helpful-key)         ;; 绑定 C-h k 到 helpful-key，用于查看按键绑定的帮助
         ("C-h x" . helpful-command)     ;; 绑定 C-h x 到 helpful-command，用于查看命令的帮助
         ("C-h ." . helpful-at-point)))  ;; 绑定 C-h . 到 helpful-at-point，用于查看当前点 (point) 的项目帮助
-
 
 ;; Track Emacs commands frequency
 ;; use `keyfreq-show' to see how many times you used a command.
@@ -213,7 +214,7 @@
   :config
   (setq link-hint-restore t))
 
-
+;; 
 (use-package which-key
   :ensure t
   :delight
@@ -243,8 +244,6 @@
   (setq which-key-special-keys '("SPC" "TAB" "RET" "ESC" "DEL"))
   (setq which-key-show-prefix 'top)
   (which-key-mode +1))
-
-
 
 (provide 'core-utils)
 

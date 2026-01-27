@@ -59,10 +59,13 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-apheleia)
 (require 'init-flycheck)
 (require 'init-org-modern)
+(require 'init-en)
+
+(require 'init-os)
 
 
 ;; ;; 英文
-(require 'init-en)
+
 
 ;; (require 'init-misc)
 
@@ -77,11 +80,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; (require 'init-windows)
 ;; (require 'init-dashboard)
 ;; 
-;; ;; 中文
-;; (when sys/macp
-;;   (require 'init-cn))
 
-;; 
 ;; (require 'init-eaf)
 ;; (require 'init-paw)
 ;; 
@@ -104,7 +103,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 ;; 各种 APP
 
-(require 'init-os)
+
 
 
 ;; Server Start.

@@ -140,9 +140,24 @@
     (add-hook 'modus-themes-after-load-theme-hook #'1043/cursor-red))
 
   (setq meow-expand-exclude-mode-list '(markdown-mode org-mode))
-  (add-to-list 'meow-mode-state-list '((vundo-mode . insert)
-                                       (fundamental-mode . motion)
-                                       (dashboard-mode . insert)))
+
+  (setq meow-mode-state-list
+        '((conf-mode . normal)
+          (fundamental-mode . normal)
+          
+          (help-mode . insert)
+          (vundo-mode . insert)
+          (helpful-mode . insert)
+          (calendar-mode . insert)
+          (calfw-calendar-mode . insert)
+          
+          (prog-mode . normal)
+          (text-mode . normal)))
+
+  ;; (add-to-list 'meow-mode-state-list '((vundo-mode . insert)
+  ;;                                      (fundamental-mode . motion)
+  ;;                                      (dashboard-mode . insert)))
+
   (setq meow-keypad-self-insert-undefined nil)
   (setq meow-keypad-start-keys '((?c . ?c)
                                  (?h . ?h)

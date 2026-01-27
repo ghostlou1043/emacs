@@ -5,6 +5,7 @@
 (setq mc/cmds-to-run-for-all
       '(
         crux-move-beginning-of-line
+        cycle-spacing
         indent-for-tab-command
         keyboard-quit
         lou/crux-smart-kill-line

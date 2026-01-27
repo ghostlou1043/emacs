@@ -60,6 +60,7 @@
   (setq mode-line-collapse-minor-modes
         '(apheleia-mode
           yas-minor-mode
+          org-indent-mode
           ))
 
   ;; 行号
