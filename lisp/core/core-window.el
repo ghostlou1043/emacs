@@ -2,6 +2,28 @@
 ;;; Commentary:
 ;;; Code:
 
+
+(use-package desktop
+  :ensure nil
+  :if (1043/enable-desktop-p)
+  :init
+  ;; 启动时，只立即恢复前 5 个 buffer 的内容。
+  (setq desktop-restore-eager 5)
+  (if (boundp 'elpaca-after-init-hook)
+      (add-hook 'elpaca-after-init-hook #'1043/desktop-setup)
+    (add-hook 'after-init-hook #'1043/desktop-setup))
+  :config
+  ;; 当 Emacs 在后台“懒加载”剩余文件时，不要在 minibuffer 显示烦人的消息
+  (setq desktop-lazy-verbose nil)
+  ;; 恢复 frames, 若为 nil 则仅保存 buffer
+  (setq desktop-restore-frames t) ;; 似乎对 daemon 没有破坏性影响，且非 daemon 下可以用于恢复布局
+
+  ;; (setq desktop-dirname) ;; 保持默认
+  ;; (setq desktop-base-file-name) ;; 保持默认
+  
+  (setq desktop-auto-save-timeout 60) 
+  (setq desktop-save t))
+
 (use-package winner
   :ensure nil
   :hook (after-init . winner-mode)
@@ -80,7 +102,7 @@
           (if (> (length name) 10)
               (concat (substring name 0 10) "…") ; 截断长名称
             name)))  ; 保留短名称
-  
+
 
   (setq popper-reference-buffers
         '("\\*Messages\\*"                 ; 匹配 *Messages* buffer
@@ -109,14 +131,39 @@
   ;; (defun popper-shell-output-empty-p (buf)
   ;;   (and (string-match-p "\\*Async Shell Command\\*" (buffer-name buf))
   ;;        (= (buffer-size buf) 0)))
-  ;; 
+  ;;
   ;; (add-to-list 'popper-reference-buffers
   ;;              '(popper-shell-output-empty-p . hide))
 
-  
-
   (popper-mode +1)
   (popper-echo-mode +1))
+
+(use-package eyebrowse
+  :ensure t
+  :hook (elpaca-after-init . eyebrowse-mode)
+  :init
+  (setq eyebrowse-keymap-prefix (kbd "C-x w"))
+  :bind (:map eyebrowse-mode-map
+              ("C-x w b" . eyebrowse-switch-to-window-config)
+              ("C-x w b" . eyebrowse-prev-window-config)
+              ("C-x w f" . eyebrowse-next-window-config)
+              ("C-x w l" . eyebrowse-last-window-config)
+
+              ("C-x w n" . eyebrowse-rename-window-config)
+              ("C-x w c" . eyebrowse-close-window-config)
+              ("C-x w w" . eyebrowse-create-window-config)
+              )
+  :config
+  ;; 使 eyebrowse 的布局切换对 treemacs 等也生效
+  (add-to-list 'window-persistent-parameters '(window-side . writable))
+  (add-to-list 'window-persistent-parameters '(window-slot . writable))
+
+  ;; (frame-parameter nil 'name)
+  ;; (set-frame-parameter nil 'name "Main")
+
+  ;; 不使用 eyebrowse-setup-opinionated-keys , 避免 M-0~9 被占用
+  (eyebrowse-mode +1)
+  )
 
 (provide 'core-window)
 

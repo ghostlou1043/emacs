@@ -6,6 +6,7 @@
       user-mail-address "ghostlou1043@gmail.com"
       auth-sources '("~/.authinfo.gpg"))
 
+;; 地理位置
 (defcustom 1043/location nil
   "存储用户的位置信息。"
   :group 'user
@@ -29,6 +30,16 @@
       (customize-save-variable '1043/location user-input)
       (message "已保存位置: %s 到 custom.el" user-input))))
 
+;; 恢复 Buffer 与布局
+(defvar 1043/desktop t)
+(defun 1043/enable-desktop-p ()
+  "Control whether to enable the desktop configuration module."
+  1043/desktop)
+(defun 1043/desktop-setup ()
+  "Enable desktop-save-mode and immediately restore the desktop session.
+This function is intended to be run after Elpaca has finished initializing."
+  (desktop-save-mode 1)
+  (desktop-read))
 
 ;; Authinfo Emacs
 (defvar 1043/authinfo t)

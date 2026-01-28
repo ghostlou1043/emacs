@@ -50,6 +50,16 @@
         '(read-only t intangible t cursor-intangible t face minibuffer-prompt))  ;; init.el
   (setq-default enable-recursive-minibuffers t)   ;; 允许在 minibuffer 中递归打开 minibuffer（复杂交互有用）
 
+  ;; 超大文件流畅编辑
+  (setq-default bidi-display-reordering nil)
+  (setq-default bidi-paragraph-direction 'left-to-right) ;; early-init.el
+
+  ;; 进一步优化长行显示的性能阈值
+  (setq bidi-inhibit-bpa t)              ; 禁止双向括号算法，进一步减少计算 ;; early-init.el
+  (setq long-line-threshold 1000)          ; 行长超过1000字时，自动降低渲染精度以提升速度
+  (setq large-hscroll-threshold 1000)      ; 超过1000字时，简化水平滚动逻辑
+  (setq syntax-wholeline-max 1000)        ; 超过1000字时，限制语法高亮的扫描范围
+
   ;; 启用像素滚动
   (when (fboundp 'pixel-scroll-precision-mode)
     (pixel-scroll-precision-mode)) ; 启用更平滑的像素精度滚动模式（如果可用）

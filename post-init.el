@@ -32,6 +32,12 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-lou)
 (require 'init-ghost)
 
+;; 是否恢复 Buffer 与布局
+(setq 1043/desktop t)
+
+;; 是否启用涉及 authinfo 相关插件
+(setq 1043/authinfo t)
+
 ;; Network Proxy.
 (setq lou/http-proxy-url "127.0.0.1")
 (setq lou/http-proxy-port "7897")

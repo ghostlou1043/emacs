@@ -407,6 +407,7 @@
         ("C-x o" . ace-window))
   :config
   (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))  ;; 设置窗口选择时的快捷键
+  (setq aw-scope 'frame)  ;; 仅在当前 frame 跳转
   (setq aw-background t)  ;; 暗化其它窗口
   (setq aw-minibuffer-flag t))
 
