@@ -13,9 +13,8 @@
 
 (unless (or (daemonp) (not (display-graphic-p)))
   (if (boundp 'elpaca-after-init-hook)
-    (add-hook 'elpaca-after-init-hook #'sys/active-nixos-gui)
+      (add-hook 'elpaca-after-init-hook #'sys/active-nixos-gui)
     (add-hook 'after-init-hook #'sys/active-nixos-gui)))
-  
 
 ;; elpaca-after-init-hook
 ;; (if (boundp 'elpaca-after-init-hook)

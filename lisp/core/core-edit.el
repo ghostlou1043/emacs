@@ -116,8 +116,7 @@
   :bind
   ((:map global-map
          ;; 自动高亮模式（光标移动自动高亮）
-         ("<f8>" . symbol-overlay-mode)
-         )
+         ("<f8>" . symbol-overlay-mode))
    (:map symbol-overlay-map
          ("i" . symbol-overlay-put) ;; 高亮/取消高亮当前符号
          ("c" . symbol-overlay-count) ;; 计算当前光标所在高亮符号的出现次数

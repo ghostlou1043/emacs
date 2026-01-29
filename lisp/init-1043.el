@@ -41,6 +41,12 @@ This function is intended to be run after Elpaca has finished initializing."
   (desktop-save-mode 1)
   (desktop-read))
 
+;; 使用 tab-bar
+(defvar 1043/tab-bar t)
+(defun 1043/enable-tab-bar-p ()
+  "Control whether to enable the tab-bar configuration module."
+  1043/tab-bar)
+
 ;; Authinfo Emacs
 (defvar 1043/authinfo t)
 (defun 1043/enable-authinfo-p ()
@@ -211,15 +217,31 @@ This function is intended to be run after Elpaca has finished initializing."
   (unless (display-graphic-p)
     (send-string-to-terminal "\033]12;#d00000\007")))
 
+;; (defun 1043/cursor-auto ()
+;;   "根据当前背景颜色亮度，将终端光标设置为黑色或白色。"
+;;   (unless (display-graphic-p)
+;;     (let* ((bg-color (frame-parameter nil 'background-color))
+;;            (bg-rgb (color-values bg-color))
+;;            (brightness (+ (nth 0 bg-rgb) (nth 1 bg-rgb) (nth 2 bg-rgb))))
+;;       (if (< brightness 100000)
+;;           (send-string-to-terminal "\033]12;#FFFFFF\007")
+;;         (send-string-to-terminal "\033]12;#000000\007")))))
+
 (defun 1043/cursor-auto ()
-  "根据当前背景颜色亮度，将终端光标设置为黑色或白色。"
+  "Change cursor color based on background brightness.
+Safe against nil values (prevents crash during startup)."
+  ;; 只有在非图形界面（终端）下才运行这段逻辑
   (unless (display-graphic-p)
-    (let* ((bg-color (frame-parameter nil 'background-color))
-           (bg-rgb (color-values bg-color))
-           (brightness (+ (nth 0 bg-rgb) (nth 1 bg-rgb) (nth 2 bg-rgb))))
-      (if (< brightness 100000)
-          (send-string-to-terminal "\033]12;#FFFFFF\007")
-        (send-string-to-terminal "\033]12;#000000\007")))))
+    (let ((bg-color (frame-parameter nil 'background-color)))
+      ;; ✅ 关键修复：先检查 bg-color 是否存在！
+      (when bg-color 
+        (let ((bg-rgb (color-values bg-color)))
+          ;; ✅ 双重保险：检查能否转换成 RGB 值
+          (when bg-rgb
+            (let ((brightness (+ (nth 0 bg-rgb) (nth 1 bg-rgb) (nth 2 bg-rgb))))
+              (if (< brightness 100000)
+                  (send-string-to-terminal "\33]12;#FFFFFF\7")
+                (send-string-to-terminal "\33]12;#000000\7")))))))))
 
 
 (provide 'init-1043)

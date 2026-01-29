@@ -144,13 +144,13 @@
   (setq meow-mode-state-list
         '((conf-mode . normal)
           (fundamental-mode . normal)
-          
+
           (help-mode . insert)
           (vundo-mode . insert)
           (helpful-mode . insert)
           (calendar-mode . insert)
           (calfw-calendar-mode . insert)
-          
+
           (prog-mode . normal)
           (text-mode . normal)))
 
@@ -171,6 +171,11 @@
   (setq meow-display-thing-help t)
   (setq meow-select-on-change t)
   (setq meow-use-clipboard t)
+
+  ;; meow-replace-state-name-list
+  ;; meow-indicator-face-alist
+  ;; (meow-setup-indicator)
+  
   (meow-global-mode +1))
 
 (use-package meow-tree-sitter

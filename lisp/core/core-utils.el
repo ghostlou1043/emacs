@@ -99,6 +99,10 @@
 (use-package focus
   :ensure t)
 
+
+(use-package pcre2el
+  :ensure t)
+
 (use-package request
   :ensure t)
 

@@ -34,7 +34,7 @@
         ;; Toggle the use of proportionately spaced (variable-pitch) fonts in the User Interface.
         modus-themes-variable-pitch-ui nil
         )
-        ;; Option for the headings’ overall style 待配置 org 与 org-agenda 后再配置  考虑终端
+  ;; Option for the headings’ overall style 待配置 org 与 org-agenda 后再配置  考虑终端
   (setq modus-themes-headings
         '((t . t)))           ; keep the default style
 
@@ -79,10 +79,10 @@
           (bg-mode-line-active unspecified)
           (bg-mode-line-inactive unspecified)
 
-  ;;         ;; From the section "Make matching parenthesis more or less intense"
-  ;;         ;; (bg-paren-match bg-magenta-intense)
-  ;;         ;; (underline-paren-match fg-main))
-        ))
+          ;;         ;; From the section "Make matching parenthesis more or less intense"
+          ;;         ;; (bg-paren-match bg-magenta-intense)
+          ;;         ;; (underline-paren-match fg-main))
+          ))
 
   ;; (setq modus-operandi-palette-user
   ;;       '((1043/red "#d00000")))

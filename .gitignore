@@ -41,3 +41,5 @@ custom.el
 /.projectile-cache.eld
 /.emacs.desktop
 /.emacs.desktop.lock
+/eyebrowse-restore/
+/persist/

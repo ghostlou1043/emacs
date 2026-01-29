@@ -6,11 +6,11 @@
   :ensure t
   :bind
   ((:map global-map
-         ("C-|" . rime-mode)
+         ;; ("C-|" . rime-mode)
          ("C-\\" . toggle-input-method))
    (:map rime-mode-map
          ("C-<f13>" . 'rime-force-enable)
-         ("C-<XF86Tools>" . 'rime-force-enable)
+         ;; ("C-<XF86Tools>" . 'rime-force-enable)
          ;; ("<f13>" . 'rime-inline-ascii)
          ;; "C-`" 键绑定到发送按键绑定事件
          ("C-`" . 'rime-send-keybinding)))
