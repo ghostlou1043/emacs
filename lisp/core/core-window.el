@@ -40,8 +40,7 @@
 (use-package easysession ;; 最大限制：仅允许同时激活一个会话
   :ensure t
   :init
-
-  (defun my-easysession-save-guard ()
+  (defun 1043/easysession-save-guard ()
     "仅当存在图形化 Frame 时才允许保存 session。"
     (if (daemonp)
         ;; 如果是 Daemon 模式，检查是否有可见的图形窗口
@@ -55,25 +54,32 @@
   ;; 在执行 easysession-save 之前，先运行我们的检查函数
   (defadvice easysession-save (around my-prevent-ghost-save activate)
     "在保存前检查是否安全。"
-    (if (my-easysession-save-guard)
+    (if (1043/easysession-save-guard)
         ad-do-it)) ;; 如果检查通过，执行原来的保存函数
 
-  (defun my-easysession-save-on-frame-close (frame)
+  (defun 1043/easysession-save-on-frame-close (frame)
     (with-selected-frame frame
       (message "Easysession: 捕获到 Frame 关闭事件，正在保存会话...")
       (easysession-save easysession--current-session-name)))
 
   (if (daemonp)
-      (add-hook 'delete-frame-functions #'my-easysession-save-on-frame-close))
-  
+      (add-hook 'delete-frame-functions #'1043/easysession-save-on-frame-close))
+
+  (defun 1043/setup-easy-session ()
+    (easysession-load-including-geometry)
+    ;; (easysession-save-mode)
+    (remove-hook 'server-after-make-frame-hook #'1043/setup-easy-session))
+
   (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
+      ;; (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
+      (add-hook 'server-after-make-frame-hook #'1043/setup-easy-session)
     (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102))
+  
 
   ;; Automatically save the current session every `easysession-save-interval'
   ;; seconds (default: 10 minutes)
   (add-hook 'emacs-startup-hook #'easysession-save-mode 103)
-  
+
   ;; :bind
   ;; easysession-switch-to 切换会话（即加载并切换当前会话
   ;; easysession-load 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
