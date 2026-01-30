@@ -2,34 +2,113 @@
 ;;; Commentary:
 ;;; Code:
 
-(use-package desktop
-  :ensure nil
-  :if (1043/enable-desktop-p)
+;; (use-package desktop
+;;   :ensure nil
+;;   :if (1043/enable-desktop-p)
+;;   :init
+;;   ;; 启动时，只立即恢复前 5 个 buffer 的内容。
+;;   (setq desktop-restore-eager 5)
+;;   
+;;   (if (daemonp)
+;;       (add-hook 'server-after-make-frame-hook #'1043/desktop-setup)
+;;     (add-hook 'emacs-startup-hook #'1043/desktop-setup))
+;;   
+;;   :config
+;;   ;; 当 emacs 在后台“懒加载”剩余文件时，不要在 minibuffer 显示烦人的消息
+;;   (setq desktop-lazy-verbose nil)
+;;     
+;;   ;; 恢复 frames, 若为 nil 则仅保存 buffer
+;;     ;; In the daemon, an error occurs because both the tty frame and the gui frame are saved simultaneously
+;;   ;; 非 daemon 下可以用于恢复布局
+;;   ;; 但 daemon 下保存的布局可以能被应用到非 daemon 下的 emacs 中
+;;   ;; 通过使用 eyebrowse-restore 或 activities 来恢复布局
+;;   ;; 经测试 eyebrowse-restore 依赖 desktop-restore-frames
+;;   (if (daemonp)
+;;       (setq desktop-restore-frames nil)
+;;     (setq desktop-restore-frames t))
+;;   
+;;   ;; (setq desktop-dirname) ;; 保持默认
+;;   ;; (setq desktop-base-file-name) ;; 保持默认
+;;   ;; (setq desktop-buffers-not-to-save) ;; 暂时保持默认
+;;   
+;;   (setq desktop-auto-save-timeout 90)
+;;   ;; 不询问直接保存，当临时使用 Emacs 时会造成污染，待配置
+;;   ;; 使用 easysession 平替 desktop.el
+;;   (setq desktop-save t))
+
+
+(use-package easysession ;; 最大限制：仅允许同时激活一个会话
+  :ensure t
   :init
-  ;; 启动时，只立即恢复前 5 个 buffer 的内容。
-  (setq desktop-restore-eager 5)
-  (if (boundp 'elpaca-after-init-hook)
-      (add-hook 'elpaca-after-init-hook #'1043/desktop-setup)
-    (add-hook 'after-init-hook #'1043/desktop-setup))
+
+  (defun my-easysession-save-guard ()
+    "仅当存在图形化 Frame 时才允许保存 session。"
+    (if (daemonp)
+        ;; 如果是 Daemon 模式，检查是否有可见的图形窗口
+        (if (> (length (frame-list)) 1) 
+            t ;; 有多于1个frame（daemon frame + 至少一个gui frame），允许保存
+          (message "Easysession: 忽略 Daemon 后台保存 (无 GUI 窗口)")
+          nil) ;; 返回 nil，阻止保存（这需要配合 advice 使用，或者手动控制）
+      t)) ;; 非 Daemon 模式，允许保存
+
+  ;; 我们使用 Advice (建议) 机制来拦截 easysession-save
+  ;; 在执行 easysession-save 之前，先运行我们的检查函数
+  (defadvice easysession-save (around my-prevent-ghost-save activate)
+    "在保存前检查是否安全。"
+    (if (my-easysession-save-guard)
+        ad-do-it)) ;; 如果检查通过，执行原来的保存函数
+
+  (defun my-easysession-save-on-frame-close (frame)
+    (with-selected-frame frame
+      (message "Easysession: 捕获到 Frame 关闭事件，正在保存会话...")
+      (easysession-save easysession--current-session-name)))
+
+  (if (daemonp)
+      (add-hook 'delete-frame-functions #'my-easysession-save-on-frame-close))
+  
+  (if (daemonp)
+      (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
+    (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102))
+
+  ;; Automatically save the current session every `easysession-save-interval'
+  ;; seconds (default: 10 minutes)
+  (add-hook 'emacs-startup-hook #'easysession-save-mode 103)
+  
+  ;; :bind
+  ;; easysession-switch-to 切换会话（即加载并切换当前会话
+  ;; easysession-load 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
+  ;; easysession-save 保存 Emacs 编辑会话
+  ;; easysession-delete 删除当前 Emacs 会话
+  ;; easysession-rename 重命名当前 Emacs 会话。
+
   :config
-  ;; 当 Emacs 在后台“懒加载”剩余文件时，不要在 minibuffer 显示烦人的消息
-  (setq desktop-lazy-verbose nil)
+  ;; This extension makes EasySession persist and restore the scratch buffer.
+  (with-eval-after-load 'easysession
+    (require 'easysession-scratch)
+    (easysession-scratch-mode +1))
 
-  ;; 恢复 frames, 若为 nil 则仅保存 buffer
-  ;; 似乎对 daemon 没有破坏性影响，且非 daemon 下可以用于恢复布局
-  ;; 但 daemon 下保存的布局可以能被应用到非 daemon 下的 Emacs 中
-  ;; 通过使用 eyebrowse-restore 或 activities 来恢复布局
-  ;; 经测试 eyebrowse-restore 依赖 desktop-restore-frames
-  (setq desktop-restore-frames t)
+  ;; This extension enables EasySession to persist and restore Magit buffers.
+  (with-eval-after-load 'easysession
+    (require 'easysession-magit)
+    (easysession-magit-mode +1))
 
-  ;; (setq desktop-dirname) ;; 保持默认
-  ;; (setq desktop-base-file-name) ;; 保持默认
-  ;; (setq desktop-buffers-not-to-save) ;; 暂时保持默认
+  (setq easysession-save-interval (* 10 60))  ; Save every 10 minutes
+  (setq easysession-switch-to-save-session t) ;; 切换 session 前保存当前 session
 
-  (setq desktop-auto-save-timeout 90)
-  ;; 不询问直接保存，当临时使用 Emacs 时会造成污染，待配置
-  ;; 使用 easysession 平替 desktop.el
-  (setq desktop-save t))
+  ;; 让 savehist 保存当前的 session name
+  ;; The easysession package can leverage savehist save the restore the current session name
+  (add-to-list 'savehist-additional-variables 'easysession--current-session-name)
+
+  ;; 在模型行或作为轻量级显示当前加载的会话 也许可以放到 tab-bar ?
+  (setq easysession-save-mode-lighter-show-session-name nil) ;; 显示在 mode 旁边
+  (setq easysession-mode-line-misc-info t)                 ;; 额外创建一个
+
+  ;; 仅保存当前可见的 buffer , 应该能加快 Emacs 的加载
+  ;; (setq easysession-buffer-list-function 'easysession-visible-buffer-list)
+
+  ;; How to create an empty session setup 暂时不需要
+  )
+
 
 (use-package winner
   :ensure nil
@@ -60,7 +139,6 @@
   (setq tab-bar-auto-width nil)
   (setq tab-bar-new-tab-group nil)  ; 不自动分组
 
-
   ;; tab-bar-new-tab-group ;; tab-bar 的组有什么用？有必要用吗？
   ;; (setq tab-bar-define-keys t)
 
@@ -76,14 +154,14 @@
   (setq tab-bar-forward-button nil)
   (setq tab-bar-menu-bar-button nil)
   ;; (setq tab-bar-select-tab-modifiers '(meta)
-  
+
   ;; 不知是否会与 activities 冲突
   (setq tab-bar-new-tab-choice "*scratch*")
 
   ;; 截断长名
   (setq tab-bar-tab-name-truncated-max 20)
   (setq tab-bar-tab-name-function #'tab-bar-tab-name-truncated)
-  
+
   ;; 给 tab 两边加上空格，更好看
   (setq tab-bar-tab-name-format-function
         (lambda (tab i)
@@ -97,12 +175,16 @@
              (propertize (number-to-string i) 'face number-face)
              (propertize (concat " " (alist-get 'name tab) " ") 'face face)))))
 
+  (setq global-mode-string
+        '((:eval (format-time-string "%H:%M"))))
+
   ;; 把 meow 的 indicator 也放在 tab-bar 上
   (setq tab-bar-format '(meow-indicator
                          tab-bar-format-tabs
                          tab-bar-format-align-right ;; 这是一个特殊的“占位符”，让后面的东西都跑到最右边
                          tab-bar-format-global    ;; global-mode-string 都可以显示些什么东西呢？
                          )))
+
 
 ;; 全屏下才考虑显示时间等
 ;; (setq display-time-format " %H:%M ")
@@ -126,11 +208,11 @@
                (string= (alist-get 'name (tab-bar--current-tab)) "*scratch*"))
       (tab-bar-rename-tab "Misc")))
   ;; (message "✓ 初始 tab 已重命名为 'Misc'")))
-  
+
   (if (daemonp)
       (add-hook 'server-after-make-frame-hook #'1043/rename-initial-scratch-tab)
     (add-hook 'emacs-startup-hook #'1043/rename-initial-scratch-tab))
-  
+
   :bind
   (("C-x w n" . activities-new)
    ("C-x w d" . activities-define)
@@ -305,7 +387,7 @@
 ;;
 ;;   ;; 不使用 eyebrowse-setup-opinionated-keys , 避免 M-0~9 被占用
 ;;   (eyebrowse-mode +1))
-
+;;
 ;; (use-package eyebrowse-restore
 ;;   :ensure t
 ;;   :bind

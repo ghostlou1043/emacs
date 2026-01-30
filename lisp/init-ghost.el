@@ -71,6 +71,7 @@
         '(apheleia-mode
           yas-minor-mode
           org-indent-mode
+          easysession-save-mode
           ))
 
   ;; 行号

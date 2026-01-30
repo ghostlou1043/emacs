@@ -96,6 +96,11 @@
 
     (treemacs-hide-gitignored-files-mode nil)))
 
+(use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
+  :ensure t
+  :after (treemacs)
+  :config (treemacs-set-scope-type 'Tabs))
+
 (provide 'init-treemacs)
 
 ;; Local variables:
