@@ -9,23 +9,23 @@
 ;;   ;; 启动时，只立即恢复前 5 个 buffer 的内容。
 ;;   (setq desktop-restore-eager 5)
 ;;   
-;;   (if (daemonp)
-;;       (add-hook 'server-after-make-frame-hook #'1043/desktop-setup)
-;;     (add-hook 'emacs-startup-hook #'1043/desktop-setup))
+;;   ;; (if (daemonp)
+;;   ;;     (add-hook 'server-after-make-frame-hook #'1043/desktop-setup)
+;;   ;;   (add-hook 'emacs-startup-hook #'1043/desktop-setup))
 ;;   
 ;;   :config
 ;;   ;; 当 emacs 在后台“懒加载”剩余文件时，不要在 minibuffer 显示烦人的消息
 ;;   (setq desktop-lazy-verbose nil)
-;;     
+;;   
 ;;   ;; 恢复 frames, 若为 nil 则仅保存 buffer
-;;     ;; In the daemon, an error occurs because both the tty frame and the gui frame are saved simultaneously
+;;   ;; In the daemon, an error occurs because both the tty frame and the gui frame are saved simultaneously
 ;;   ;; 非 daemon 下可以用于恢复布局
 ;;   ;; 但 daemon 下保存的布局可以能被应用到非 daemon 下的 emacs 中
 ;;   ;; 通过使用 eyebrowse-restore 或 activities 来恢复布局
 ;;   ;; 经测试 eyebrowse-restore 依赖 desktop-restore-frames
-;;   (if (daemonp)
-;;       (setq desktop-restore-frames nil)
-;;     (setq desktop-restore-frames t))
+;;   ;; (if (daemonp)
+;;   ;;     (setq desktop-restore-frames nil)
+;;   ;;   (setq desktop-restore-frames t))
 ;;   
 ;;   ;; (setq desktop-dirname) ;; 保持默认
 ;;   ;; (setq desktop-base-file-name) ;; 保持默认
@@ -39,46 +39,10 @@
 
 (use-package easysession ;; 最大限制：仅允许同时激活一个会话
   :ensure t
-  :init
-  (defun 1043/easysession-save-guard ()
-    "仅当存在图形化 Frame 时才允许保存 session。"
-    (if (daemonp)
-        ;; 如果是 Daemon 模式，检查是否有可见的图形窗口
-        (if (> (length (frame-list)) 1) 
-            t ;; 有多于1个frame（daemon frame + 至少一个gui frame），允许保存
-          (message "Easysession: 忽略 Daemon 后台保存 (无 GUI 窗口)")
-          nil) ;; 返回 nil，阻止保存（这需要配合 advice 使用，或者手动控制）
-      t)) ;; 非 Daemon 模式，允许保存
-
-  ;; 我们使用 Advice (建议) 机制来拦截 easysession-save
-  ;; 在执行 easysession-save 之前，先运行我们的检查函数
-  (defadvice easysession-save (around my-prevent-ghost-save activate)
-    "在保存前检查是否安全。"
-    (if (1043/easysession-save-guard)
-        ad-do-it)) ;; 如果检查通过，执行原来的保存函数
-
-  (defun 1043/easysession-save-on-frame-close (frame)
-    (with-selected-frame frame
-      (message "Easysession: 捕获到 Frame 关闭事件，正在保存会话...")
-      (easysession-save easysession--current-session-name)))
-
-  (if (daemonp)
-      (add-hook 'delete-frame-functions #'1043/easysession-save-on-frame-close))
-
-  (defun 1043/setup-easy-session ()
-    (easysession-load-including-geometry)
-    ;; (easysession-save-mode)
-    (remove-hook 'server-after-make-frame-hook #'1043/setup-easy-session))
-
-  (if (daemonp)
-      ;; (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
-      (add-hook 'server-after-make-frame-hook #'1043/setup-easy-session)
-    (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102))
-  
-
+  ;; :init
   ;; Automatically save the current session every `easysession-save-interval'
   ;; seconds (default: 10 minutes)
-  (add-hook 'emacs-startup-hook #'easysession-save-mode 103)
+  ;; (add-hook 'emacs-startup-hook #'easysession-save-mode 103)
 
   ;; :bind
   ;; easysession-switch-to 切换会话（即加载并切换当前会话
@@ -89,14 +53,14 @@
 
   :config
   ;; This extension makes EasySession persist and restore the scratch buffer.
-  (with-eval-after-load 'easysession
-    (require 'easysession-scratch)
-    (easysession-scratch-mode +1))
+  ;; (with-eval-after-load 'easysession
+  ;;   (require 'easysession-scratch)
+  ;;   (easysession-scratch-mode +1))
 
   ;; This extension enables EasySession to persist and restore Magit buffers.
-  (with-eval-after-load 'easysession
-    (require 'easysession-magit)
-    (easysession-magit-mode +1))
+  ;; (with-eval-after-load 'easysession
+  ;;   (require 'easysession-magit)
+  ;;   (easysession-magit-mode +1))
 
   (setq easysession-save-interval (* 10 60))  ; Save every 10 minutes
   (setq easysession-switch-to-save-session t) ;; 切换 session 前保存当前 session
@@ -113,8 +77,43 @@
   ;; (setq easysession-buffer-list-function 'easysession-visible-buffer-list)
 
   ;; How to create an empty session setup 暂时不需要
-  )
+  (setq easysession-setup-load-session t)
+  (easysession-setup))
 
+;; (defun 1043/easysession-save-guard ()
+;;   "仅当存在图形化 Frame 时才允许保存 session。"
+;;   (if (daemonp)
+;;       ;; 如果是 Daemon 模式，检查是否有可见的图形窗口
+;;       (if (> (length (frame-list)) 1) 
+;;           t ;; 有多于1个frame（daemon frame + 至少一个gui frame），允许保存
+;;         ;; (message "Easysession: 忽略 Daemon 后台保存 (无 GUI 窗口)")
+;;         nil) ;; 返回 nil，阻止保存（这需要配合 advice 使用，或者手动控制）
+;;     t)) ;; 非 Daemon 模式，允许保存
+;; 
+;; ;; 我们使用 Advice (建议) 机制来拦截 easysession-save
+;; ;; 在执行 easysession-save 之前，先运行我们的检查函数
+;; (defadvice easysession-save (around my-prevent-ghost-save activate)
+;;   "在保存前检查是否安全。"
+;;   (if (1043/easysession-save-guard)
+;;       ad-do-it)) ;; 如果检查通过，执行原来的保存函数
+
+;; (defun 1043/easysession-save-on-frame-close (frame)
+;;   (with-selected-frame frame
+;;     ;; (message "Easysession: 捕获到 Frame 关闭事件，正在保存会话...")
+;;     (easysession-save easysession--current-session-name)))
+;; 
+;; (if (daemonp)
+;;     (add-hook 'delete-frame-functions #'1043/easysession-save-on-frame-close))
+
+;; (defun 1043/setup-easy-session ()
+;;   (easysession-load-including-geometry)
+;;   ;; (easysession-save-mode)
+;;   (remove-hook 'server-after-make-frame-hook #'1043/setup-easy-session))
+;; 
+;; (if (daemonp)
+;;     ;; (add-hook 'server-after-make-frame-hook #'easysession-load-including-geometry 102)
+;;     (add-hook 'server-after-make-frame-hook #'1043/setup-easy-session)
+;;   (add-hook 'emacs-startup-hook #'easysession-load-including-geometry 102))
 
 (use-package winner
   :ensure nil
