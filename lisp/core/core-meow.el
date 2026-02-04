@@ -175,7 +175,6 @@
   ;; meow-replace-state-name-list
   ;; meow-indicator-face-alist
   ;; (meow-setup-indicator)
-  
   (meow-global-mode +1))
 
 (use-package meow-tree-sitter

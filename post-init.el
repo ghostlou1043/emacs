@@ -9,7 +9,13 @@
 (when (version< emacs-version "28.1")
   (message "Your Emacs is old, and some functionality in this config will be disabled. Please upgrade if possible."))
 
-;; Add load-path.
+
+;; 待配置固定后使用 31 版本的新功能 user-lisp 调整
+(setq user-lisp-auto-scrape nil)
+;; user-lisp-directory
+;; prepare-user-lisp 
+
+;; Add load-path. 
 (defun update-load-path (&optional dirs)
   "Add a list of directories to the top of `load-path`.
 If DIRS is provided, it should be a list of strings.
@@ -23,6 +29,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
           (message "Directory does not exist, skipping load: %s" full-path))))))
 
 (update-load-path '("lisp" "os-lisp" "site-lisp" "lisp/core"))
+
 
 ;; User Custom
 (load custom-file 'noerror 'no-message)
@@ -123,12 +130,6 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
     (if (boundp 'elpaca-after-init-hook)
         (add-hook 'elpaca-after-init-hook #'server-start)
       (add-hook 'after-init-hook #'server-start))))
-
-
-
-
-
-
 
 
 ;; word-wrap t： 启用单词换行，即在空白处换行而不是单词中间。

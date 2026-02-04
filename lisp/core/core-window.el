@@ -6,6 +6,7 @@
 ;; desktop 与 easysession 都存在被设定为自动加载时，
 ;; 若没有已经打开的 frame 会导致临时的 frame 编辑框被用于恢复会话
 ;; 不过疑似需要已经存在一个 frame 才能够让其他应用打开临时的 frame
+;; 即使是通过终端打开临时 TUI Emacs 似乎也不会对 easysession 造成影响，desktop 待测试
 
 (use-package desktop
   :ensure nil
@@ -37,20 +38,24 @@
   (setq desktop-save t)
   (desktop-save-mode +1))
 
-
-
-
-(use-package easysession ;; 限制：仅允许同时激活一个会话
+(use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
   :ensure t
   :if (1043/enable-easysession-p)
-  ;; aehijmovxy
   :bind (:map global-map
               ("C-x w =" . easysession-switch-to)
               ;; 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
               ("C-x w L" . easysession-load)
               ("C-x w S" . easysession-save)
-              ("C-x w D" . easysession-delete)
-              ("C-x w R" . easysession-rename))
+              ("C-x w C" . easysession-reset)
+              ("C-x w R" . easysession-rename)
+              ("C-x w D" . easysession-delete))
+  :init
+  ;; 自动加载会话
+  (setq easysession-setup-load-session t)
+  ;; 设置加载优先级
+  (setq easysession-setup-add-hook-depth 102)
+  ;; 为不同模式下启动的 Emacs 添加 hook
+  (easysession-setup)
 
   :config
   ;; 后续考虑实现区分 TUI 与 GUI 不同会话，是否需要启动不同的 daemon ?
@@ -65,33 +70,30 @@
     (require 'easysession-magit)
     (easysession-magit-mode +1))
 
-  (setq easysession-save-interval 600)  ; Save every 10 minutes
-  (setq easysession-switch-to-save-session t) ;; 切换 session 前保存当前 session
-
-  ;; 让 savehist 保存当前的 session name
+  ;; 通过 savehist 保存当前的 session name 并在下次启动时恢复对应的 session
   ;; The easysession package can leverage savehist save the restore the current session name
   (add-to-list 'savehist-additional-variables 'easysession--current-session-name)
 
-  ;; 在模型行或作为轻量级显示当前加载的会话 也许可以放到 tab-bar ?
+  ;; 为 tab-bar 添加 [Easysession:main]
+  (add-to-list 'global-mode-string '(:eval (easysession--mode-line-session-name-format)) 'append)
+
   (setq easysession-save-mode-lighter-show-session-name nil) ;; 显示在 mode 旁边
   (setq easysession-mode-line-misc-info nil)                 ;; 额外创建一个
 
-  ;; (:eval (easysession--mode-line-session-name-format))
+  ;; easysession-exclude-from-find-file-hook
 
   ;; 仅保存当前可见的 buffer , 应该能加快 Emacs 的加载
   ;; (setq easysession-buffer-list-function 'easysession-visible-buffer-list)
 
   ;; How to create an empty session setup 暂时不需要
-  (setq easysession-setup-load-session t)
-  (easysession-setup))
 
-;; (if (daemonp)
-;;     (add-hook 'delete-frame-functions #'1043/easysession-save-on-frame-close))
-
-;; (defun 1043/setup-easy-session ()
-;;   (easysession-load-including-geometry)
-;;   ;; (easysession-save-mode)
-;;   (remove-hook 'server-after-make-frame-hook #'1043/setup-easy-session))
+  ;; easysession-save-mode
+  ;; Save every 10 minutes
+  (setq easysession-save-interval 600)
+  ;; 切换 session 前保存当前 session
+  (setq easysession-switch-to-save-session t)
+  ;; 仅在 GUI 下 使用 easysession 保存，也仅保存 GUI frame
+  (setq easysession-save-mode-predicate #'display-graphic-p))
 
 (use-package activities
   :ensure t
@@ -102,17 +104,30 @@
   ;; (setq edebug-inhibit-emacs-lisp-mode-bindings t)
 
   (defun 1043/rename-initial-scratch-tab ()
-    "如果当前只有一个 tab，并且它叫 *scratch*，就重命名为 Misc。"
-    (interactive)
-    (when (and (bound-and-true-p tab-bar-mode)
-               (= (length (tab-bar-tabs)) 1)  ; 只有 1 个 tab
-               (string= (alist-get 'name (tab-bar--current-tab)) "*scratch*"))
-      (tab-bar-rename-tab "Misc")))
-  ;; (message "✓ 初始 tab 已重命名为 'Misc'")))
+    "重命名当前 frame 的 *scratch* tab 为 Misc。"
+    (when (bound-and-true-p tab-bar-mode)
+      (let ((tabs (tab-bar-tabs)))
+        (when (and (= (length tabs) 1)
+                   (string= (alist-get 'name (car tabs)) "*scratch*"))
+          (tab-bar-rename-tab "Misc")))))
 
-  (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'1043/rename-initial-scratch-tab)
-    (add-hook 'emacs-startup-hook #'1043/rename-initial-scratch-tab))
+  ;; daemon 下创建新 frame 重命名 (包括第一个 frame)
+  ;; server 下创建新 frame 重命名 (不包括第一个 frame)
+  (add-hook 'server-after-make-frame-hook #'1043/rename-initial-scratch-tab)
+
+  ;; 为 server 和 非 daemon 和 server 模式下的初始 frame 重命名
+  (unless (daemonp)
+    (add-hook 'window-setup-hook #'1043/rename-initial-scratch-tab)
+    ;; 为非 daemon 和 server 模式下的 frame 重命名
+    (unless (server-running-p)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame
+                    (1043/rename-initial-scratch-tab))))))
+
+  ;; after-make-frame-functions 调用函数时，frame 已经创建但可能还没准备好，因此可能界面上的设置没有被更新
+  ;; server-after-make-frame-hook 是在 frame 彻底准备好之后调用的函数
+  ;; 考虑后续的 frame 关闭问题
 
   :bind
   (("C-x w w" . activities-new)
@@ -128,9 +143,8 @@
    ("C-x w e" . activities-define)
    ("C-x w a" . activities-save-all))
 
+  ;; ("C-x w s" . activities-switch-buffer) ;; 有 consult 的情况下大概率不需要
   ;; ("C-x w w" . activities-switch)  ;; 使用 tab-bar 切换
-  ;; ("C-x w s" . activities-switch-buffer)
-  ;; activities-tabs--switch-buffer
 
   :config
   (setq activities-name-prefix "")
@@ -305,7 +319,7 @@
          ("C-x w q" . popper-kill-latest-popup))
    (:repeat-map popper-repeat-map
                 ("`" . popper-cycle)))
-  
+
   :config
   (setq popper-display-control nil) ;; 使用 Shackle 控制窗口的弹出
   (setq popper-group-function #'popper-group-by-projectile) ;; 按照项目分组弹窗
