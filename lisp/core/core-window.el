@@ -37,13 +37,8 @@
 ;;   (setq desktop-save t))
 
 
-(use-package easysession ;; 最大限制：仅允许同时激活一个会话
+(use-package easysession ;; 限制：仅允许同时激活一个会话
   :ensure t
-  ;; :init
-  ;; Automatically save the current session every `easysession-save-interval'
-  ;; seconds (default: 10 minutes)
-  ;; (add-hook 'emacs-startup-hook #'easysession-save-mode 103)
-
   ;; :bind
   ;; easysession-switch-to 切换会话（即加载并切换当前会话
   ;; easysession-load 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用

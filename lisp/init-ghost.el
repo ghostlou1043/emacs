@@ -14,6 +14,7 @@
   (setq-default fringes-outside-margins nil) ; 让 fringes 在 margins 内部（影响 diff-hl、flymake 等显示）
   (setq confirm-kill-processes nil) ;; 设为 nil 使退出自动杀掉进程
   (setq y-or-n-p-use-read-key t)
+  (setq-default indicate-buffer-boundaries nil) ;; 在fringe提示缓冲区边界
 
   ;; Git
   (setq vc-handled-backends '(Git)) ; 只启用 Git 作为版本控制后端（避免其他后端性能/噪音）
@@ -63,6 +64,7 @@
   ;; 启用像素滚动
   (when (fboundp 'pixel-scroll-precision-mode)
     (pixel-scroll-precision-mode)) ; 启用更平滑的像素精度滚动模式（如果可用）
+
 
   ;; mode-line
   ;; (setq mode-line-collapse-minor-modes-to " …")

@@ -82,20 +82,20 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; ;; 编辑
 ;; (require 'init-edit)
 ;; (require 'init-meow)
-;; 
+;;
 ;; ;; ;; 文件管理
-;; 
+;;
 ;; ;; ;; 布局
 ;; (require 'init-windows)
 ;; (require 'init-dashboard)
-;; 
+;;
 
 ;; (require 'init-eaf)
 ;; (require 'init-paw)
-;; 
+;;
 ;; (require 'init-telega)
 ;; (require 'init-elfeed)
-;; 
+;;
 ;; (require 'init-treemacs)
 
 ;; 项目管理
@@ -140,12 +140,12 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 ;; (use-package compile-angel
 ;;   :straight t
-;;   :demand t  
+;;   :demand t
 ;;   :custom
 ;;   ;; Set `compile-angel-verbose` to nil to suppress output from compile-angel.
 ;;   ;; Drawback: The minibuffer will not display compile-angel's actions.
 ;;   (compile-angel-verbose t)
-;; 
+;;
 ;;   :config
 ;;   ;; The following directive prevents compile-angel from compiling your init
 ;;   ;; files. If you choose to remove this push to `compile-angel-excluded-files'
@@ -160,14 +160,32 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;;   (push "/post-init.el" compile-angel-excluded-files)
 ;;   (push "/pre-early-init.el" compile-angel-excluded-files)
 ;;   (push "/post-early-init.el" compile-angel-excluded-files)
-;; 
+;;
 ;;   ;; A local mode that compiles .el files whenever the user saves them.
 ;;   ;; (add-hook 'emacs-lisp-mode-hook #'compile-angel-on-save-local-mode)
-;; 
+;;
 ;;   ;; A global mode that compiles .el files prior to loading them via `load' or
 ;;   ;; `require'. Additionally, it compiles all packages that were loaded before
 ;;   ;; the mode `compile-angel-on-load-mode' was activated.
 ;;   (compile-angel-on-load-mode 1))
+
+
+;; Temporary storage here
+;; PROMPT: "Generate an optimized Emacs init.el using straight.el and the Minad stack.
+;; Include Eglot (with Tinymist auto-export), Tempel (with collection), Magit,
+;; Apheleia (with Ruff), Expand-region, Treemacs (bound to M-0 with follow-mode),
+;; and esup. Support R, Python, Rmd/Qmd (via polymode + quarto-mode + poly-markdown),
+;; SQL (sql-indent), YAML, and Typst (typst-ts-mode + treesit-auto + typst-preview).
+;; UI: Catppuccin Latte, Doom-modeline, Nerd-icons, JetBrainsMono Nerd Font (height 150),
+;; and org-modern. Optimization: 0.4s boot via deferred loading, 50MB startup GC,
+;; DISABLE straight-check-for-modifications, and esup-depth 0. Features: short y/n,
+;; custom.el file, delete-selection, electric-pair, column-number, pixel-scroll,
+;; auto-fill for text, Vertico directory delete, consult-buffer with recentf
+;; integration, suppress VC link prompts, DISABLE all backups/autosaves/lockfiles,
+;; and fix Orderless matching to allow hyphen-based completion."
+
+;; used https://opencode.ai/ + Claude Opus + https://github.com/keegancsmith/emacs-mcp-server . It's impressive at coding and debugging emacs.
+
 
 
 ;; Local variables:

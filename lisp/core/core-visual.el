@@ -14,7 +14,7 @@
   
   (setq visual-fill-column-adjust-for-text-scale t)
   (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust)
-      
+  
   (setq visual-fill-column-width nil))
 
 (use-package lin  ;; 待配置定制
@@ -40,6 +40,8 @@
           pdf-outline-buffer-mode-hook
           proced-mode-hook
           tabulated-list-mode-hook))
+  ;; (set-face-attribute 'hl-line nil :inherit 'lin-custom)
+  ;; (set-face-attribute 'vertico-current nil :inherit 'lin-custom)
   (lin-global-mode 1))
 
 (use-package pulsar ;; pulsar-highlight-permanently-dwim 待与其他包集成
