@@ -53,6 +53,7 @@
      rime-predicate-punctuation-line-begin-p ;; 在行首输入标点符号时禁用 Rime
      rime-predicate-current-uppercase-letter-p)) ;; 在大写字母时禁用 Rime
   ;; 在 mode-line 显示当前输入法状态
+  (rime-title "CN")
   (mode-line-mule-info '((:eval (rime-lighter))))
   ;; 设置候选词框的 face 属性，调整颜色
   (set-face-attribute 'rime-default-face nil :foreground "#d830f2" :background 'unspecified)

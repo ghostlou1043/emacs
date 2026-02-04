@@ -410,9 +410,8 @@ Grouping logic:
     (sort related-blocks (lambda (a b)
                            (< (plist-get a :begin) (plist-get b :begin))))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ✅ SECTION 7 (修订): BUILD EDIT CONTENT - 精确的可编辑区域边界
+;; ✅ SECTION 7 (完全重写): BUILD EDIT CONTENT - 正确的 Marker 位置计算
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun org-src-edit--build-edit-content (related-blocks current-element comment-char)
@@ -424,8 +423,9 @@ COMMENT-CHAR is the comment character for this language.
 
 Returns a list (CONTENT EDITABLE-BEGIN EDITABLE-END) where:
   CONTENT is the complete buffer content string
-  EDITABLE-BEGIN is the position (integer) where editable region starts (AFTER markers)
-  EDITABLE-END is the position (integer) where editable region ends (BEFORE markers)"
+  EDITABLE-BEGIN is a marker position (integer) pointing to the FIRST CODE CHARACTER
+  EDITABLE-END is a marker position (integer) pointing to AFTER THE LAST CODE CHARACTER"
+  
   (let ((content "")
         (block-counter 0)
         editable-start
@@ -437,37 +437,45 @@ Returns a list (CONTENT EDITABLE-BEGIN EDITABLE-END) where:
              (status (if is-current "EDITABLE" "Read Only"))
              (line-number (plist-get block-info :line-number))
              (body (plist-get block-info :body))
-             (begin-marker (org-src-edit--make-begin-marker
-                            (if (= (length related-blocks) 1) "Block" block-counter)
-                            status
-                            line-number
-                            comment-char)))
+             (block-label (if (= (length related-blocks) 1) "Block" block-counter)))
 
-        ;; Add begin marker
-        (setq content (concat content begin-marker))
+        ;; ========== BEGIN MARKER ==========
+        (let ((begin-marker (org-src-edit--make-begin-marker
+                             block-label
+                             status
+                             line-number
+                             comment-char)))
+          (setq content (concat content begin-marker)))
 
-        ;; 【关键】记录可编辑区域的开始：marker 之后
+        ;; ========== BODY CONTENT ==========
+        ;; 当这是可编辑块时，记录起始位置
+        ;; 【关键】这个位置应该指向 body 的第一个字符
         (when is-current
           (setq editable-start (length content)))
 
-        ;; Add body (ensure it ends with newline)
+        ;; 添加 body 内容（确保以换行结尾）
         (let ((body-with-newline (if (string-suffix-p "\n" body)
                                      body
                                    (concat body "\n"))))
-          (setq content (concat content body-with-newline))
+          (setq content (concat content body-with-newline)))
 
-          ;; 【关键】记录可编辑区域的结束：body 之后、end marker 之前
-          (when is-current
-            (setq editable-end (length content))))
+        ;; 当这是可编辑块时，记录结束位置
+        ;; 【关键】这个位置应该指向 body 内容之后（即将开始 end marker）
+        (when is-current
+          (setq editable-end (length content)))
 
-        ;; Add end marker
+        ;; ========== END MARKER ==========
         (let ((end-marker (org-src-edit--make-end-marker
-                           (if (= (length related-blocks) 1) "Block" block-counter)
+                           block-label
                            comment-char)))
           (setq content (concat content end-marker)))))
 
-    ;; Return (content, start-pos, end-pos)
-    ;; These positions point to the BODY CONTENT only, excluding markers
+    ;; ✅ 验证：确保我们有有效的位置
+    (unless (and editable-start editable-end (< editable-start editable-end))
+      (user-error "【build-edit-content】错误: 无法计算可编辑区域位置"))
+
+    ;; 返回 (CONTENT EDITABLE-START EDITABLE-END)
+    ;; 这些位置是字符串位置，可以直接用于 copy-marker
     (list content editable-start editable-end)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -529,62 +537,62 @@ by iterating through the buffer and finding block markers."
             (copy-marker end-pos :insert-before)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ✅ SECTION 9 (修订): EXTRACT EDITABLE CONTENT - 精确提取
+;; ✅ SECTION 9 (完全重写): EXTRACT EDITABLE CONTENT - 精确提取
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun org-src-edit--extract-editable-content (buffer editable-begin editable-end)
   "Extract the actual code content from the editable region.
 
 BUFFER is the editing buffer.
-EDITABLE-BEGIN and EDITABLE-END are markers pointing to the editable region.
+EDITABLE-BEGIN and EDITABLE-END are integer positions pointing to the editable region.
 
 Returns the cleaned code content (without markers).
 
-The markers should point to:
+The positions should point to:
   EDITABLE-BEGIN: position right AFTER the begin marker line
   EDITABLE-END: position right BEFORE the end marker line"
+  
   (with-current-buffer buffer
     (save-excursion
-      ;; 获取 marker 的位置
-      (let* ((begin-pos (marker-position editable-begin))
-             (end-pos (marker-position editable-end)))
+      ;; ✅ STEP 1: 验证位置有效性
+      (unless (and (integerp editable-begin) (integerp editable-end) 
+                   (< editable-begin editable-end))
+        (user-error "【extract】错误: 无效的可编辑区域位置 (begin=%s, end=%s)"
+                    editable-begin editable-end))
 
-        (unless (and begin-pos end-pos (< begin-pos end-pos))
-          (user-error "【extract】错误: Editable region markers are invalid (begin=%s, end=%s)"
-                      begin-pos end-pos))
+      ;; ✅ STEP 2: 从缓冲区直接提取原始内容
+      (let ((raw-content (buffer-substring-no-properties editable-begin editable-end)))
 
-        ;; 【关键】直接从缓冲区提取文本（这应该是纯代码，没有 markers）
-        (let ((raw-content (buffer-substring begin-pos end-pos)))
+        ;; ✅ STEP 3: 验证内容（检查是否包含 marker）
+        (when (string-match-p "\\[.*Block.*\\]" raw-content)
+          (message "【⚠️  WARNING】提取内容包含 marker 标记！")
+          (message "  内容: %S" raw-content)
+          (message "  begin=%d, end=%d, length=%d" 
+                   editable-begin editable-end (length raw-content)))
 
-          ;; ✅ 验证：不应该包含 marker 标记
-          (when (string-match-p "\\[.*Block.*\\]" raw-content)
-            (message "【⚠️ WARNING】提取的内容包含 marker 标记！这表示边界设置有问题")
-            (message "内容预览: %S" (substring raw-content 0 (min 100 (length raw-content)))))
+        ;; ✅ STEP 4: 在临时缓冲区中清理内容
+        (with-temp-buffer
+          ;; 插入原始内容到临时缓冲区
+          (insert raw-content)
+          
+          ;; 移除开头的空白行
+          (goto-char (point-min))
+          (while (and (not (eobp))
+                      (looking-at "^[[:space:]]*$"))
+            (delete-line))
 
-          ;; ✅ 清理内容：移除开头和末尾的空白/换行
-          (with-temp-buffer
-            (insert raw-content)
-            
-            ;; 移除开头的空白行
-            (goto-char (point-min))
-            (while (and (< (point) (point-max))
-                        (string-match-p "^[[:space:]]*$"
-                                        (buffer-substring (line-beginning-position)
-                                                          (line-end-position))))
-              (delete-region (line-beginning-position) 
-                             (min (+ (line-end-position) 1) (point-max))))
+          ;; 移除末尾的空白行
+          (goto-char (point-max))
+          (while (and (not (bobp))
+                      (progn
+                        (forward-line -1)
+                        (looking-at "^[[:space:]]*$")))
+            (delete-region (point) (line-end-position))
+            (when (not (bobp))
+              (delete-char 1)))
 
-            ;; 移除末尾的空白行
-            (goto-char (point-max))
-            (while (and (> (point) (point-min))
-                        (string-match-p "^[[:space:]]*$"
-                                        (buffer-substring (line-beginning-position)
-                                                          (line-end-position))))
-              (delete-region (max (- (line-beginning-position) 1) (point-min)) 
-                             (line-end-position)))
-
-            ;; ✅ 返回清理后的内容（不包含 markers）
-            (buffer-substring-no-properties (point-min) (point-max))))))))
+          ;; ✅ STEP 5: 返回清理后的内容
+          (buffer-substring-no-properties (point-min) (point-max)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ✅ SECTION 10 (升级版): UPDATE ORG BLOCK - 带有恢复机制
@@ -745,18 +753,12 @@ Falls back to fundamental-mode if no matching mode is found."
        (t (fundamental-mode))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ✅ SECTION 12 (修订): 创建 Markers 并保存冗余信息用于恢复
+;; ✅ SECTION 12 (修正): 创建 Markers 并保存冗余信息用于恢复
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun org-src-edit-enhanced ()
-  "Open the source block at point for enhanced editing.
-
-This function:
-  1. Extracts block information at point
-  2. Collects related blocks if needed
-  3. Creates an edit buffer with proper markers
-  4. Stores session info including backup identifiers for recovery"
+  "Open the source block at point for enhanced editing."
   (interactive)
 
   (unless (derived-mode-p 'org-mode)
@@ -768,12 +770,6 @@ This function:
       (user-error "Not on a source block"))
 
     (let* ((language (plist-get block-info :language))
-           (_debug-1 (progn
-                       (message "【DEBUG 1】语言检测结果: '%s' (类型: %s)"
-                                language
-                                (type-of language))
-                       language))
-
            (org-file (buffer-file-name))
            (session (plist-get block-info :session))
            (tangle (plist-get block-info :tangle))
@@ -781,122 +777,97 @@ This function:
            (effective-dir (org-src-edit--get-effective-dir dir-from-block org-file))
            (current-element (plist-get block-info :element))
            (comment-char (org-src-edit--get-comment-char language))
-
            (ext (org-src-edit--get-extension language))
-           (_debug-2 (progn
-                       (message "【DEBUG 2】获取的扩展名: '%s'" ext)
-                       ext))
-
            (target-file (org-src-edit--get-target-file language session tangle effective-dir org-file))
-
-           (_debug-3 (progn
-                       (message "【DEBUG 3】目标文件路径: '%s'" target-file)
-                       target-file))
-
            (org-buffer (current-buffer))
-
-           ;; ✅ 新增：获取块的行号（用于恢复）
            (block-line-number (plist-get block-info :line-number))
            (block-body (plist-get block-info :body)))
 
       ;; 确保目标文件存在
       (org-src-edit--ensure-file-exists target-file)
 
-      (let ((_debug-4 (progn
-                        (if (file-exists-p target-file)
-                            (message "【DEBUG 4】✅ 文件已创建: %s" target-file)
-                          (message "【DEBUG 4】❌ 文件创建失败: %s" target-file))
-                        target-file)))
+      ;; 收集相关块
+      (let ((related-blocks (org-src-edit--collect-related-blocks block-info org-buffer)))
+        (unless related-blocks
+          (setq related-blocks (list block-info)))
 
-        ;; 收集相关块
-        (let ((related-blocks (org-src-edit--collect-related-blocks block-info org-buffer)))
-          (unless related-blocks
-            (setq related-blocks (list block-info)))
+        ;; 构建编辑内容
+        (pcase-let ((`(,content ,edit-start ,edit-end)
+                     (org-src-edit--build-edit-content related-blocks current-element comment-char)))
 
-          ;; 构建编辑内容
-          (pcase-let ((`(,content ,edit-start ,edit-end)
-                       (org-src-edit--build-edit-content related-blocks current-element comment-char)))
+          ;; 创建或获取编辑缓冲区
+          (let ((edit-buffer (find-file-noselect target-file)))
 
-            ;; 创建或获取编辑缓冲区
-            (let ((edit-buffer (find-file-noselect target-file)))
-              (message "【DEBUG 5】打开的缓冲区: %s" (buffer-name edit-buffer))
+            (with-current-buffer edit-buffer
+              ;; 清除并插入新内容
+              (erase-buffer)
+              (insert content)
 
-              (with-current-buffer edit-buffer
-                ;; 清除并插入新内容
-                (erase-buffer)
-                (insert content)
+              ;; 设置语言模式
+              (org-src-edit--setup-language-mode language)
 
-                ;; 设置语言模式
-                (org-src-edit--setup-language-mode language)
+              ;; 【关键】在获取编辑内容前应用只读保护
+              ;; 这样文本属性就在 marker 创建前就设置好了
+              (org-src-edit--apply-readonly-protection
+               edit-buffer related-blocks current-element comment-char)
 
-                ;; 应用只读保护
-                (org-src-edit--apply-readonly-protection
-                 edit-buffer related-blocks current-element comment-char)
+              ;; 【关键】现在创建 marker，指向缓冲区中的精确位置
+              ;; edit-start 和 edit-end 是整数，代表缓冲区中的字符位置
+              ;; 我们需要转换成缓冲区中的实际位置
+              (let ((editable-begin-marker (copy-marker edit-start nil))
+                    (editable-end-marker (copy-marker edit-end nil)))
 
-                ;; 创建可编辑区域的 markers
-                (let ((editable-begin-marker (copy-marker (+ edit-start 1) t))
-                      (editable-end-marker (copy-marker edit-end t)))
+                ;; ✅ 保存会话信息
+                (setq-local org-src-edit--session-info
+                            (list :org-buffer org-buffer
+                                  :org-marker (copy-marker (plist-get block-info :begin))
+                                  :block-line-number block-line-number
+                                  :block-body-hash (md5 (or block-body ""))
+                                  :block-language language
+                                  :language language
+                                  :comment-char comment-char
+                                  :target-file target-file
+                                  :related-blocks related-blocks
+                                  :current-element current-element
+                                  :editable-begin editable-begin-marker
+                                  :editable-end editable-end-marker))
 
-                  ;; ✅ 保存会话信息（包含恢复用的备用信息）
-                  (setq-local org-src-edit--session-info
-                              (list :org-buffer org-buffer
-                                    ;; 主要方式：使用 marker
-                                    :org-marker (copy-marker (plist-get block-info :begin))
-                                    ;; 备用方式 1：使用行号
-                                    :block-line-number block-line-number
-                                    ;; 备用方式 2：使用内容摘要
-                                    :block-body-hash (md5 (or block-body ""))
-                                    :block-language language
-                                    ;; 其他信息
-                                    :language language
-                                    :comment-char comment-char
-                                    :target-file target-file
-                                    :related-blocks related-blocks
-                                    :current-element current-element
-                                    :editable-begin editable-begin-marker
-                                    :editable-end editable-end-marker))
+                ;; 启用 minor mode
+                (org-src-edit-enhanced-mode 1)
 
-                  ;; 启用 minor mode
-                  (org-src-edit-enhanced-mode 1)
+                ;; 移动到可编辑内容的开始
+                (goto-char (marker-position editable-begin-marker))
 
-                  ;; 移动到可编辑内容的开始
-                  (goto-char (marker-position editable-begin-marker))
+                ;; 显示缓冲区
+                (switch-to-buffer edit-buffer)
 
-                  ;; 显示缓冲区
-                  (switch-to-buffer edit-buffer)
-
-                  ;; 显示帮助信息
-                  (message "Editing %s block. Use C-c C-c to save or C-c C-k to abort."
-                           language))))))))))
+                ;; 显示帮助信息
+                (message "Editing %s block (lines %d-%d). Use C-c C-c to save or C-c C-k to abort."
+                         language
+                         block-line-number
+                         (+ block-line-number 2))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ✅ SECTION 13 (修订): SAVE CHANGES - 使用备用参数
+;; ✅ SECTION 13 (修复): SAVE CHANGES - 修复 "Selecting deleted buffer" 错误
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun org-src-edit-enhanced-save ()
   "Save changes and return to the Org file.
 
-This function implements a robust save sequence:
-  1. Extract content from the edit buffer
-  2. Save the edit file to disk
-  3. Update the Org buffer's content (with recovery mechanism)
-  4. Save the Org file
-  5. Close the edit buffer
-  6. Return to the Org file"
+This function implements a robust save sequence that avoids
+the 'Selecting deleted buffer' error."
   (interactive)
 
   (unless org-src-edit--session-info
     (user-error "Not in an org-src-edit-enhanced buffer"))
 
-  ;; 获取会话信息
   (let* ((session-info org-src-edit--session-info)
          (edit-buffer (current-buffer))
          (org-buffer (plist-get session-info :org-buffer))
          (org-marker (plist-get session-info :org-marker))
          (editable-begin (plist-get session-info :editable-begin))
          (editable-end (plist-get session-info :editable-end))
-         ;; ✅ 新增：获取备用标识符
          (backup-line (plist-get session-info :block-line-number))
          (backup-language (plist-get session-info :block-language))
          (backup-hash (plist-get session-info :block-body-hash)))
@@ -904,7 +875,9 @@ This function implements a robust save sequence:
     ;; ✅ STEP 1: 提取编辑内容
     (message "【save】STEP 1: 提取编辑内容...")
     (let ((new-content (org-src-edit--extract-editable-content
-                        edit-buffer editable-begin editable-end)))
+                        edit-buffer
+                        (marker-position editable-begin)
+                        (marker-position editable-end))))
 
       (unless new-content
         (user-error "Failed to extract content from edit buffer"))
@@ -921,7 +894,7 @@ This function implements a robust save sequence:
       (unless (buffer-live-p org-buffer)
         (user-error "Original Org buffer has been killed"))
 
-      ;; ✅ STEP 4: 在 Org 缓冲区中更新内容（带备用参数）
+      ;; ✅ STEP 4: 在 Org 缓冲区中更新内容
       (message "【save】STEP 3: 更新 Org 缓冲区...")
       (org-src-edit--update-org-block org-buffer org-marker new-content
                                       backup-line backup-language backup-hash)
@@ -937,13 +910,16 @@ This function implements a robust save sequence:
       (with-current-buffer edit-buffer
         (set-buffer-modified-p nil))
 
-      ;; ✅ STEP 7: 关闭编辑缓冲区
+      ;; ✅ STEP 7: 关闭编辑缓冲区（这是导致错误的地方）
       (message "【save】STEP 5: 关闭编辑缓冲区...")
-      (kill-buffer edit-buffer)
+      ;; 【关键修复】在删除缓冲区前，我们需要先切换到 org-buffer
+      ;; 这样任何后续的操作都不会试图访问已删除的缓冲区
+      (with-current-buffer org-buffer
+        ;; 现在安全地删除编辑缓冲区
+        (kill-buffer edit-buffer))
       (message "【save】STEP 5: ✅ 编辑缓冲区已关闭")
 
-      ;; ✅ STEP 8: 切换回 Org 缓冲区
-      (message "【save】STEP 6: 返回 Org 缓冲区...")
+      ;; ✅ STEP 8: 确保我们在 org-buffer 中
       (if (buffer-live-p org-buffer)
           (progn
             (switch-to-buffer org-buffer)
@@ -951,7 +927,7 @@ This function implements a robust save sequence:
         (user-error "Cannot return to Org buffer")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ✅ SECTION 14: ABORT EDITING
+;; ✅ SECTION 14 (修复): ABORT EDITING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
@@ -965,15 +941,20 @@ This command closes the edit buffer without saving changes."
     (user-error "Not in an org-src-edit-enhanced buffer"))
 
   (let* ((session-info org-src-edit--session-info)
-         (org-buffer (plist-get session-info :org-buffer)))
+         (org-buffer (plist-get session-info :org-buffer))
+         (edit-buffer (current-buffer)))
 
-    ;; Close edit buffer without saving
+    ;; 标记编辑缓冲区为未修改（这样 kill-buffer 不会询问）
     (set-buffer-modified-p nil)
-    (kill-buffer (current-buffer))
 
-    ;; Return to Org file
-    (switch-to-buffer org-buffer)
-    (message "Edit aborted, changes discarded.")))
+    ;; 【关键修复】同样的方式：先切换到 org-buffer，再删除 edit-buffer
+    (if (buffer-live-p org-buffer)
+        (progn
+          (switch-to-buffer org-buffer)
+          (kill-buffer edit-buffer)
+          (message "Edit aborted, changes discarded."))
+      (kill-buffer edit-buffer)
+      (user-error "Cannot return to Org buffer"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ✅ SECTION 15: MINOR MODE

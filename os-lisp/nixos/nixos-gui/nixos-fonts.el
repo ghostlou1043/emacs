@@ -76,7 +76,7 @@
   ;; Emoji
   (1043/set-font-if-exists 'emoji "Noto Color Emoji")
   ;; (setq default-text-properties '(line-spacing 0.1 line-height 1.1))
-    ;; Symbols
+  ;; Symbols
   (1043/set-font-if-exists 'symbol "IosevkaTerm Nerd Font")
   ;; Symbols append
   (when (member "Symbols Nerd Font" 1043/font-family-list)
