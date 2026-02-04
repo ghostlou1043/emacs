@@ -12,6 +12,7 @@
         lou/crux-smart-kill-line
         org-self-insert-command
         org-yank
+        rime--return
         sp-backward-kill-symbol
         sp-end-of-sexp
         sp-forward-barf-sexp

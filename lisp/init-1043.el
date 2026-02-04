@@ -19,10 +19,10 @@
   (if (and (boundp '1043/location)    ;; 检查变量是否存在
            1043/location              ;; 检查变量是否不为 nil
            (not (string= 1043/location ""))) ;; 检查变量是否不为空字符串
-      
+
       ;; 情况 A: 变量已经设置好了
       (message "当前位置已设置为: %s" 1043/location)
-    
+
     ;; 情况 B: 变量未设置，需要询问并保存
     (let ((user-input (read-string "1043/location 未设置，请输入位置: ")))
       ;; 核心魔法：customize-save-variable
@@ -31,15 +31,16 @@
       (message "已保存位置: %s 到 custom.el" user-input))))
 
 ;; 恢复 Buffer 与布局
-(defvar 1043/desktop t)
+(defvar 1043/session-restore-backend 'easysession
+  "Backend for session restoration: 'easysession, 'desktop, or 'none.")
+
+(defun 1043/enable-easysession-p ()
+  "Returns t if easysession is the selected session restore backend."
+  (eq 1043/session-restore-backend 'easysession))
+
 (defun 1043/enable-desktop-p ()
-  "Control whether to enable the desktop configuration module."
-  1043/desktop)
-(defun 1043/desktop-setup ()
-  "Enable desktop-save-mode and immediately restore the desktop session.
-This function is intended to be run after Elpaca has finished initializing."
-  (desktop-save-mode 1)
-  (desktop-read))
+  "Returns t if desktop is the selected session restore backend."
+  (eq 1043/session-restore-backend 'desktop))
 
 ;; 使用 tab-bar
 (defvar 1043/tab-bar t)
@@ -234,7 +235,7 @@ Safe against nil values (prevents crash during startup)."
   (unless (display-graphic-p)
     (let ((bg-color (frame-parameter nil 'background-color)))
       ;; ✅ 关键修复：先检查 bg-color 是否存在！
-      (when bg-color 
+      (when bg-color
         (let ((bg-rgb (color-values bg-color)))
           ;; ✅ 双重保险：检查能否转换成 RGB 值
           (when bg-rgb

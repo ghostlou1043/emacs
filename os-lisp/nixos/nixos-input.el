@@ -1,5 +1,5 @@
 ;;; nixos-input.el --- NixOS Input. -*- lexical-binding: t -*-
-;;; Commentary: 
+;;; Commentary:
 ;;; Code:
 
 (use-package rime
@@ -15,7 +15,7 @@
          ;; "C-`" 键绑定到发送按键绑定事件
          ("C-`" . 'rime-send-keybinding)))
   :custom
-  ;; 设置默认输入法为 Rime 
+  ;; 设置默认输入法为 Rime
   (default-input-method "rime")
   (rime-librime-root 1043/rime-librime-root)
   ;; 需要原始的 pkgs.emacs-gtk 或其他类似的路径，不能够是自定义的包的路径，会导致 include 文件夹找不到
