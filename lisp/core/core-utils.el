@@ -99,7 +99,6 @@
 (use-package focus
   :ensure t)
 
-
 (use-package pcre2el
   :ensure t)
 
@@ -117,6 +116,11 @@
 
 (use-package posframe
   :ensure t)
+
+(use-package pinentry
+  :ensure t
+  :config
+  (pinentry-start))
 
 (use-package qrencode
   :ensure t)
@@ -218,7 +222,7 @@
   :config
   (setq link-hint-restore t))
 
-;; 
+;;
 (use-package which-key
   :ensure t
   :delight
