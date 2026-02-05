@@ -2,6 +2,95 @@
 ;;; Commentary:
 ;;; Code:
 
+(use-package winner
+  :ensure nil
+  :unless (1043/enable-tab-bar-p)
+  :hook (after-init . winner-mode)
+  :bind
+  (:map global-map
+        ("C-x w b" . winner-undo)
+        ("C-x w f " . winner-redo)))
+
+(use-package tab-bar
+  :ensure nil
+  :hook ((after-init . tab-bar-mode)
+         (after-init . tab-bar-history-mode))
+  :bind
+  ((:map global-map
+         ("C-x w b" . tab-bar-history-back)
+         ("C-x w f" . tab-bar-history-forward)
+         ("C-x w t" . tab-bar-switch-to-tab)
+         ("C-x w p" . tab-bar-switch-to-prev-tab)
+         ("C-x w n" . tab-bar-switch-to-next-tab))
+
+   (:repeat-map tab-bar-repeat-map
+                ("b" . tab-bar-history-back)
+                ("f" . tab-bar-history-forward)
+                ("p" . tab-bar-switch-to-prev-tab)
+                ("n" . tab-bar-switch-to-next-tab)))
+
+  :config
+  (setq tab-bar-show t)                  ;; 设为 1 时则 tab 小于 1 个时自动隐藏
+  (setq tab-bar-truncate t)              ;; 截断 tab-bar 仅显示一行
+
+  ;; 待定
+  (setq tab-bar-auto-width nil)
+  (setq tab-bar-new-tab-group nil)  ; 不自动分组
+
+  ;; tab-bar-new-tab-group ;; tab-bar 的组有什么用？有必要用吗？
+  ;; (setq tab-bar-define-keys t)
+
+  (setq tab-bar-new-tab-to 'right)
+  (setq tab-bar-new-button-show nil)
+  (setq tab-bar-close-button-show nil)
+
+  (setq tab-bar-tab-hints t)            ;; 显示 Tab 的数字
+  (setq tab-bar-separator "")
+  (setq tab-bar-new-button nil)
+  (setq tab-bar-back-button nil)
+  (setq tab-bar-close-button nil)
+  (setq tab-bar-forward-button nil)
+  (setq tab-bar-menu-bar-button nil)
+  ;; (setq tab-bar-select-tab-modifiers '(meta)
+
+  ;; 不知是否会与 activities 冲突
+  (setq tab-bar-new-tab-choice "*scratch*")
+
+  ;; 截断长名
+  (setq tab-bar-tab-name-truncated-max 20)
+  (setq tab-bar-tab-name-function #'tab-bar-tab-name-truncated)
+
+  ;; 给 tab 两边加上空格，更好看
+  (setq tab-bar-tab-name-format-function
+        (lambda (tab i)
+          (let* ((face (funcall tab-bar-tab-face-function tab))
+                 (current-p (eq (car tab) 'current-tab))  ; 判断是否为当前 tab
+                 (number-face (if current-p
+                                  `(:inherit ,face :weight ultra-bold :underline t)
+                                `(:inherit ,face :weight ultra-bold))))  ; 非活动 tab 无下划线
+            (concat
+             (propertize " " 'face face)
+             (propertize (number-to-string i) 'face number-face)
+             (propertize (concat " " (alist-get 'name tab) " ") 'face face)))))
+
+  ;; 把 meow 的 indicator 也放在 tab-bar 上
+  (setq tab-bar-format '(meow-indicator
+                         tab-bar-format-tabs
+                         tab-bar-format-align-right ;; 这是一个特殊的“占位符”，让后面的东西都跑到最右边
+                         tab-bar-format-global    ;; global-mode-string 都可以显示些什么东西呢？
+                         )))
+
+
+;; 全屏下才考虑显示时间等
+;; (setq display-time-format " %H:%M ")
+
+;; (setq global-mode-string
+;;       '((:eval (format-time-string "%H:%M"))
+;;         ))
+
+;; 如果发现在 daemon 下创建 frame 后 tab-bar 刷新不及时，使用其搭配 hook 强制刷新
+;; (tab-bar--update-tab-bar-lines)
+
 ;; 可能存在的问题：
 ;; desktop 与 easysession 都存在被设定为自动加载时，
 ;; 若没有已经打开的 frame 会导致临时的 frame 编辑框被用于恢复会话
@@ -97,12 +186,8 @@
 
 (use-package activities
   :ensure t
+  :after tab-bar
   :init
-  (activities-mode)
-  (activities-tabs-mode)
-  ;; Prevent `edebug' default bindings from interfering.
-  ;; (setq edebug-inhibit-emacs-lisp-mode-bindings t)
-
   (defun 1043/rename-initial-scratch-tab ()
     "重命名当前 frame 的 *scratch* tab 为 Misc。"
     (when (bound-and-true-p tab-bar-mode)
@@ -127,7 +212,13 @@
 
   ;; after-make-frame-functions 调用函数时，frame 已经创建但可能还没准备好，因此可能界面上的设置没有被更新
   ;; server-after-make-frame-hook 是在 frame 彻底准备好之后调用的函数
-  ;; 考虑后续的 frame 关闭问题
+
+  (if (boundp 'elpaca-after-init-hook)
+      (add-hook 'elpaca-after-init-hook #'gcmh-mode)
+    (add-hook 'after-init-hook #'gcmh-mode))
+
+  (activities-mode +1)
+  (activities-tabs-mode +1)
 
   :bind
   (("C-x w w" . activities-new)
@@ -144,123 +235,35 @@
    ("C-x w a" . activities-save-all))
 
   ;; ("C-x w s" . activities-switch-buffer) ;; 有 consult 的情况下大概率不需要
-  ;; ("C-x w w" . activities-switch)  ;; 使用 tab-bar 切换
+  ;; ("C-x w w" . activities-switch)        ;; 使用 tab-bar 切换
 
   :config
+  ;; 设置 activity-tab 的前缀
   (setq activities-name-prefix "")
-  (setq activities-always-persist t) ;; 设为 nil 则仅在退出时保存，t 时则在保存 buffer 时也保存
+  ;; 利用书签存储状态
   (setq activities-bookmark-store t)
-  (setq activities-set-frame-name t) ;; Only applies when activities-tabs-mode is disabled.
+  ;; 不能存为 bookmark 时警告
+  (setq activities-bookmark-warnings t)
+  
+  ;; 在 suspend 时将该 activities 的 buffer 关闭
+  (setq activities-kill-buffers nil)
+  ;; 将 activity 名称设置为 frame 标题
+  ;; Only applies when activities-tabs-mode is disabled.
+  (setq activities-set-frame-name t)
+  ;; 恢复 activity 时使用使用当前的 frame
+  (setq activities-resume-into-frame 'current)
 
-  (setq activities-resume-into-frame 'current) ;; resume 时使用当前 frame
-  (setq activities-mode-idle-frequency 60)     ;; 闲置 60s 后保存 activities
-  (setq activities-bookmark-warnings t) ;; 不能存为 bookmark 时警告
-
-  (setq tab-bar-tab-face-function 'tab-bar-tab-face-default) ;; 令 tab-bar 不被 activities 影响
+  ;; 闲置 60s 后保存 activities
+  (setq activities-mode-idle-frequency 60)
+  ;; 设为 nil 则仅在退出时保存，t 时则在保存 buffer 时也保存
+  (setq activities-always-persist nil)
+  
+  ;; 令 tab-bar 不被 activities 影响 (太丑)
+  (setq tab-bar-tab-face-function 'tab-bar-tab-face-default)
 
   ;; 该变量的颜色体现在 activities-resume 界面，而非 tab-bar
-  (setq activities-annotation-colors '("blue" "red" 0.65))
+  (setq activities-annotation-colors '("blue" "red" 0.65)))
 
-  ;; activities-default-name-fn
-  ;; activities-kill-buffers
-  ;; activities-tabs-mode-hook
-
-  ;; activities-anti-kill-predicates
-  ;; activities-anti-save-predicates
-  ;; activities-tabs-tab-bar-tab-face-function-original
-  ;; activities-tabs-before-resume-functions
-
-  )
-
-(use-package winner
-  :ensure nil
-  :unless (1043/enable-tab-bar-p)
-  :hook (after-init . winner-mode)
-  :bind
-  (:map global-map
-        ("C-x w b" . winner-undo)
-        ("C-x w f " . winner-redo)))
-
-(use-package tab-bar
-  :ensure nil
-  :hook ((after-init . tab-bar-mode)
-         (after-init . tab-bar-history-mode))
-  :bind  ;; 如果使用 tab-bar 则必绑定 activities 部分命令交由其实现
-  ((:map global-map
-         ("C-x w b" . tab-bar-history-back)
-         ("C-x w f" . tab-bar-history-forward)
-         ("C-x w t" . tab-bar-switch-to-tab)
-         ("C-x w p" . tab-bar-switch-to-prev-tab)
-         ("C-x w n" . tab-bar-switch-to-next-tab))
-
-   (:repeat-map tab-bar-repeat-map
-                ("b" . tab-bar-history-back)
-                ("f" . tab-bar-history-forward)
-                ("p" . tab-bar-switch-to-prev-tab)
-                ("n" . tab-bar-switch-to-next-tab)))
-
-  :config
-  (setq tab-bar-show t)                  ;; 设为 1 时则 tab 小于 1 个时自动隐藏
-  (setq tab-bar-truncate t)              ;; 截断 tab-bar 仅显示一行
-
-  ;; 待定
-  (setq tab-bar-auto-width nil)
-  (setq tab-bar-new-tab-group nil)  ; 不自动分组
-
-  ;; tab-bar-new-tab-group ;; tab-bar 的组有什么用？有必要用吗？
-  ;; (setq tab-bar-define-keys t)
-
-  (setq tab-bar-new-tab-to 'right)
-  (setq tab-bar-new-button-show nil)
-  (setq tab-bar-close-button-show nil)
-
-  (setq tab-bar-tab-hints t)            ;; 显示 Tab 的数字
-  (setq tab-bar-separator "")
-  (setq tab-bar-new-button nil)
-  (setq tab-bar-back-button nil)
-  (setq tab-bar-close-button nil)
-  (setq tab-bar-forward-button nil)
-  (setq tab-bar-menu-bar-button nil)
-  ;; (setq tab-bar-select-tab-modifiers '(meta)
-
-  ;; 不知是否会与 activities 冲突
-  (setq tab-bar-new-tab-choice "*scratch*")
-
-  ;; 截断长名
-  (setq tab-bar-tab-name-truncated-max 20)
-  (setq tab-bar-tab-name-function #'tab-bar-tab-name-truncated)
-
-  ;; 给 tab 两边加上空格，更好看
-  (setq tab-bar-tab-name-format-function
-        (lambda (tab i)
-          (let* ((face (funcall tab-bar-tab-face-function tab))
-                 (current-p (eq (car tab) 'current-tab))  ; 判断是否为当前 tab
-                 (number-face (if current-p
-                                  `(:inherit ,face :weight ultra-bold :underline t)
-                                `(:inherit ,face :weight ultra-bold))))  ; 非活动 tab 无下划线
-            (concat
-             (propertize " " 'face face)
-             (propertize (number-to-string i) 'face number-face)
-             (propertize (concat " " (alist-get 'name tab) " ") 'face face)))))
-
-  (setq global-mode-string
-        '((:eval (format-time-string "%H:%M"))
-          (:eval (easysession--mode-line-session-name-format))
-          ))
-
-  ;; 把 meow 的 indicator 也放在 tab-bar 上
-  (setq tab-bar-format '(meow-indicator
-                         tab-bar-format-tabs
-                         tab-bar-format-align-right ;; 这是一个特殊的“占位符”，让后面的东西都跑到最右边
-                         tab-bar-format-global    ;; global-mode-string 都可以显示些什么东西呢？
-                         )))
-
-
-;; 全屏下才考虑显示时间等
-;; (setq display-time-format " %H:%M ")
-
-;; 如果发现在 daemon 下创建 frame 后 tab-bar 刷新不及时，使用其搭配 hook 强制刷新
-;; (tab-bar--update-tab-bar-lines)
 
 ;; help-window-select 自动焦点 help 窗口
 

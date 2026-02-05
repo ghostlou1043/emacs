@@ -42,7 +42,7 @@
   "Returns t if desktop is the selected session restore backend."
   (eq 1043/session-restore-backend 'desktop))
 
-;; close frame or emacs
+;; Close frame or emacs
 (defun 1043/smart-close-frame-or-emacs ()
   "智能关闭"
   (interactive)
@@ -85,10 +85,6 @@
     (when unsaved-buffers
       (message "有 %d 个未保存的文件" (length unsaved-buffers))
       (save-some-buffers))
-    
-    ;; ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ;; 步骤 2：关闭 frame（根据类型选择不同的清理方式）
-    ;; ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     
     (if is-server-frame
         ;; emacsclient frame → 需要通知 daemon
