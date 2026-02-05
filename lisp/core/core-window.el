@@ -13,8 +13,10 @@
 
 (use-package tab-bar
   :ensure nil
-  :hook ((after-init . tab-bar-mode)
-         (after-init . tab-bar-history-mode))
+  :init
+  (tab-bar-mode +1)
+  (tab-bar-history-mode +1)
+
   :bind
   ((:map global-map
          ("C-x w b" . tab-bar-history-back)
@@ -33,34 +35,26 @@
   (setq tab-bar-show t)                  ;; 设为 1 时则 tab 小于 1 个时自动隐藏
   (setq tab-bar-truncate t)              ;; 截断 tab-bar 仅显示一行
 
-  ;; 待定
   (setq tab-bar-auto-width nil)
   (setq tab-bar-new-tab-group nil)  ; 不自动分组
-
   ;; tab-bar-new-tab-group ;; tab-bar 的组有什么用？有必要用吗？
-  ;; (setq tab-bar-define-keys t)
 
+  
+  (setq tab-bar-define-keys nil)
   (setq tab-bar-new-tab-to 'right)
   (setq tab-bar-new-button-show nil)
   (setq tab-bar-close-button-show nil)
+  (setq tab-bar-select-tab-modifiers nil)
 
-  (setq tab-bar-tab-hints t)            ;; 显示 Tab 的数字
+  (setq tab-bar-tab-hints t)              ;; 显示 tab 序号，由于自定义该选项无效果
   (setq tab-bar-separator "")
-  (setq tab-bar-new-button nil)
-  (setq tab-bar-back-button nil)
-  (setq tab-bar-close-button nil)
-  (setq tab-bar-forward-button nil)
-  (setq tab-bar-menu-bar-button nil)
-  ;; (setq tab-bar-select-tab-modifiers '(meta)
-
-  ;; 不知是否会与 activities 冲突
   (setq tab-bar-new-tab-choice "*scratch*")
 
   ;; 截断长名
   (setq tab-bar-tab-name-truncated-max 20)
   (setq tab-bar-tab-name-function #'tab-bar-tab-name-truncated)
 
-  ;; 给 tab 两边加上空格，更好看
+  ;; 给 tab 两边加上空格，并加粗序号，当前 tab 序号下添加下划线
   (setq tab-bar-tab-name-format-function
         (lambda (tab i)
           (let* ((face (funcall tab-bar-tab-face-function tab))
@@ -73,23 +67,11 @@
              (propertize (number-to-string i) 'face number-face)
              (propertize (concat " " (alist-get 'name tab) " ") 'face face)))))
 
-  ;; 把 meow 的 indicator 也放在 tab-bar 上
-  (setq tab-bar-format '(meow-indicator
-                         tab-bar-format-tabs
+
+  (setq tab-bar-format '(tab-bar-format-tabs        ;; 标签页
                          tab-bar-format-align-right ;; 这是一个特殊的“占位符”，让后面的东西都跑到最右边
-                         tab-bar-format-global    ;; global-mode-string 都可以显示些什么东西呢？
+                         tab-bar-format-global      ;; 显示各种全局信息
                          )))
-
-
-;; 全屏下才考虑显示时间等
-;; (setq display-time-format " %H:%M ")
-
-;; (setq global-mode-string
-;;       '((:eval (format-time-string "%H:%M"))
-;;         ))
-
-;; 如果发现在 daemon 下创建 frame 后 tab-bar 刷新不及时，使用其搭配 hook 强制刷新
-;; (tab-bar--update-tab-bar-lines)
 
 ;; 可能存在的问题：
 ;; desktop 与 easysession 都存在被设定为自动加载时，
@@ -129,6 +111,7 @@
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
   :ensure t
+  :demand t
   :if (1043/enable-easysession-p)
   :bind (:map global-map
               ("C-x w =" . easysession-switch-to)
@@ -138,13 +121,6 @@
               ("C-x w C" . easysession-reset)
               ("C-x w R" . easysession-rename)
               ("C-x w D" . easysession-delete))
-  :init
-  ;; 自动加载会话
-  (setq easysession-setup-load-session t)
-  ;; 设置加载优先级
-  (setq easysession-setup-add-hook-depth 102)
-  ;; 为不同模式下启动的 Emacs 添加 hook
-  (easysession-setup)
 
   :config
   ;; 后续考虑实现区分 TUI 与 GUI 不同会话，是否需要启动不同的 daemon ?
@@ -182,7 +158,14 @@
   ;; 切换 session 前保存当前 session
   (setq easysession-switch-to-save-session t)
   ;; 仅在 GUI 下 使用 easysession 保存，也仅保存 GUI frame
-  (setq easysession-save-mode-predicate #'display-graphic-p))
+  (setq easysession-save-mode-predicate #'display-graphic-p)
+
+  ;; 自动加载会话
+  (setq easysession-setup-load-session t)
+  ;; 设置加载优先级
+  (setq easysession-setup-add-hook-depth 102)
+  ;; 为不同模式下启动的 Emacs 添加 hook
+  (easysession-setup))
 
 (use-package activities
   :ensure t
@@ -244,8 +227,8 @@
   (setq activities-bookmark-store t)
   ;; 不能存为 bookmark 时警告
   (setq activities-bookmark-warnings t)
-  
   ;; 在 suspend 时将该 activities 的 buffer 关闭
+
   (setq activities-kill-buffers nil)
   ;; 将 activity 名称设置为 frame 标题
   ;; Only applies when activities-tabs-mode is disabled.
@@ -253,11 +236,13 @@
   ;; 恢复 activity 时使用使用当前的 frame
   (setq activities-resume-into-frame 'current)
 
+
+  ;; 设为 nil 则仅在退出时保存
+  ;; t 时则在保存 buffer 时也保存
+  (setq activities-always-persist nil)
   ;; 闲置 60s 后保存 activities
   (setq activities-mode-idle-frequency 60)
-  ;; 设为 nil 则仅在退出时保存，t 时则在保存 buffer 时也保存
-  (setq activities-always-persist nil)
-  
+
   ;; 令 tab-bar 不被 activities 影响 (太丑)
   (setq tab-bar-tab-face-function 'tab-bar-tab-face-default)
 

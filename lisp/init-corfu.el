@@ -29,12 +29,11 @@
   (setq corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   (setq corfu-preview-current 'insert)
 
-
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
   ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
   ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
 
-  ;; (setq corfu-auto nil
+  ;; (setq corfu-auto t
   ;;       corfu-auto-delay 0.2 ;; When corfu-auto t
   ;;       corfu-auto-trigger "." ;; Custom trigger characters
   ;;       corfu-quit-no-match 'separator) ;; or t

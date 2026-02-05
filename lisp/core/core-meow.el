@@ -175,6 +175,9 @@
   ;; meow-replace-state-name-list
   ;; meow-indicator-face-alist
   ;; (meow-setup-indicator)
+  
+  ;; 把 meow 的 indicator 也放在 tab-bar 上
+  (add-to-list 'tab-bar-format 'meow-indicator)
   (meow-global-mode +1))
 
 (use-package meow-tree-sitter

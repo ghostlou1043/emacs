@@ -82,7 +82,7 @@
     (add-hook 'after-init-hook #'envrc-global-mode))
   :config
   ;; 静默启动，不显示详细加载信息
-  (setq envrc-show-summary-in-minibuffer t))
+  (setq envrc-show-summary-in-minibuffer nil))
 
 (use-package plz
   :ensure t)
