@@ -104,6 +104,12 @@
 ;; 终端中 window 之间的分隔线被隐藏，可开启行号模式作为分隔
 (use-package spacious-padding
   :ensure t
+  :after modus-themes
+  :init
+  ;; 避免 Unable to load color "unspecified-fg" ，Unable to load color "unspecified-bg" 告警，
+  ;; 并修复终端下 window 间隔线不可见问题
+  (add-hook 'modus-themes-after-load-theme-hook #'spacious-padding-mode)
+
   :config
   ;; These are the default values, but I keep them here for visibility.
   ;; Also check `spacious-padding-subtle-frame-lines'.
@@ -117,8 +123,7 @@
            :fringe-width 8
            :scroll-bar-width 16))
   (setq spacious-padding-subtle-frame-lines
-        '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive))
-  (spacious-padding-mode +1))
+        '(:mode-line-active "#d00000" :mode-line-inactive spacious-padding-line-inactive)))
 
 
 (provide 'core-themes)

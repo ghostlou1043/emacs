@@ -48,7 +48,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; 是否启用涉及 authinfo 相关插件
 (setq 1043/authinfo t)
 
-;; Network Proxy.
+;; 网络代理.
 (setq lou/http-proxy-url "127.0.0.1")
 (setq lou/http-proxy-port "7897")
 
@@ -59,12 +59,15 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (setq lou/socks-proxy-port "7897")
 (setq lou/socks-proxy-version "5")
 
-;; Select Module.
+;; 选择补全后端
 ;; (setq 1043/completion-backend 'lsp-bridge)
 (setq 1043/completion-backend 'lsp-proxy)
 ;; (setq 1043/completion-backend 'eglot)
 
+;; 选择文件管理器
 (setq 1043/file-manager 'dired)
+
+;; 选择主题
 (setq 1043/themes 'modus-themes)
 
 ;; Load built-in features and core configuration.
