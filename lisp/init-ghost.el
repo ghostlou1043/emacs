@@ -82,6 +82,9 @@
   :hook ((emacs-lisp-mode . display-line-numbers-mode)
          (text-mode . display-line-numbers-mode)
          (prog-mode . display-line-numbers-mode))
+  :bind
+  (:map global-map
+        ("C-x C-c" . lou/save-buffers-kill-terminal))
   )
 
 ;; :bind

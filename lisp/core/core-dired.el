@@ -2,7 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-
 ;;; ====================================================================
 ;;; Dired 核心配置
 ;;; ====================================================================
@@ -282,13 +281,13 @@
            ("Archives"  (extension "zip" "rar" "gz" "bz2" "tar" "7z"))
            ("Images"    (extension "jpg" "JPG" "webp" "png" "PNG" "jpeg" "JPEG" "bmp" "BMP" "TIFF" "tiff" "gif" "GIF"))))))
 
-  ;; Show git info in dired
+;; Show git info in dired
 (use-package dired-git-info
   :ensure t
   :bind (:map dired-mode-map
               ("'" . dired-git-info-mode)))
 
-  ;; Allow rsync from dired buffers
+;; Allow rsync from dired buffers
 (use-package dired-rsync
   :ensure t
   :bind (:map dired-mode-map

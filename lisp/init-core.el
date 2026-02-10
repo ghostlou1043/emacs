@@ -17,7 +17,6 @@
 (require 'core-edit)
 (require 'core-meow)
 
-
 (require 'core-magit)
 (require 'core-language)
 (require 'core-read)

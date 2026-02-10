@@ -42,64 +42,6 @@
   "Returns t if desktop is the selected session restore backend."
   (eq 1043/session-restore-backend 'desktop))
 
-;; Close frame or emacs
-(defun 1043/smart-close-frame-or-emacs ()
-  "智能关闭"
-  (interactive)
-  (let* ((all-frames (visible-frame-list))
-         ;; 计算可见 frame 数量
-         (frame-count (if (daemonp)
-                          (1- (length all-frames))  ; daemon: -1
-                        (length all-frames)))       ; GUI: 正常
-         ;; 是否是 daemon 模式
-         (is-daemon (daemonp))
-         ;; 当前 frame 是否来自 emacsclient
-         (is-server-frame (and (fboundp 'server-running-p)
-                               (server-running-p)
-                               (frame-parameter nil 'client))))
-    
-    (cond
-     (is-daemon
-      (if (> frame-count 1)
-          ;; 多个 frame → 直接关闭
-          (1043/close-frame-safely is-server-frame frame-count)
-        
-        ;; 最后一个 frame → 询问确认（但不退出 daemon）
-        (when (y-or-n-p "这是最后一个窗口，确定要关闭吗？")
-          (1043/close-frame-safely is-server-frame frame-count))))
-     
-     ((> frame-count 1)
-      (1043/close-frame-safely is-server-frame frame-count))
-     
-     (t (save-buffers-kill-emacs)))))
-
-(defun 1043/close-frame-safely (is-server-frame frame-count)
-  "安全地关闭当前 frame，并正确通知 daemon（如果需要）"
-  (let ((unsaved-buffers
-         (cl-remove-if-not
-          (lambda (buf)
-            (and (buffer-modified-p buf)
-                 (buffer-file-name buf)))
-          (buffer-list))))
-    
-    (when unsaved-buffers
-      (message "有 %d 个未保存的文件" (length unsaved-buffers))
-      (save-some-buffers))
-    
-    (if is-server-frame
-        ;; emacsclient frame → 需要通知 daemon
-        (progn
-          (run-hooks 'server-done-hook)
-          (server-done)
-          (message "关闭当前 frame（还有 %d 个 frame 在运行）"
-                   (1- frame-count))
-          (delete-frame))
-      
-      ;; 普通 GUI frame → 直接关闭
-      (message "关闭当前 frame（还有 %d 个 frame 在运行）"
-               (1- frame-count))
-      (delete-frame))))
-
 ;; 使用 tab-bar
 (defvar 1043/tab-bar t)
 (defun 1043/enable-tab-bar-p ()

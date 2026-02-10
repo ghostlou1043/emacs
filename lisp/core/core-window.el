@@ -39,7 +39,7 @@
   (setq tab-bar-new-tab-group nil)  ; 不自动分组
   ;; tab-bar-new-tab-group ;; tab-bar 的组有什么用？有必要用吗？
 
-  
+
   (setq tab-bar-define-keys nil)
   (setq tab-bar-new-tab-to 'right)
   (setq tab-bar-new-button-show nil)
@@ -81,7 +81,7 @@
 
 (use-package desktop
   :ensure nil
-  :if (1043/enable-desktop-p)
+  ;; :if (1043/enable-desktop-p)
   :init
   ;; 启动时，只立即恢复前 5 个 buffer 的内容。
   (setq desktop-restore-eager 5)
@@ -90,29 +90,34 @@
   ;; 保存并恢复布局
   (setq desktop-restore-frames t)
   ;; 允许加载被锁定的会话
-  (setq desktop-load-locked-desktop 'check-pid)
+  ;; (setq desktop-load-locked-desktop 'check-pid)
   ;; 直到窗口被创建才自动加载
-  (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'desktop-read)
-    (add-hook 'emacs-startup-hook #'desktop-read))
+  ;; (if (daemonp)
+  ;;     (add-hook 'server-after-make-frame-hook #'desktop-read)
+  ;;   (add-hook 'emacs-startup-hook #'desktop-read))
   :config
   ;; 后续考虑实现区分 TUI 与 GUI 不同会话，是否需要启动不同的 daemon ?
   ;; (setq desktop-dirname) ;; 保持默认
   ;; (setq desktop-base-file-name) ;; 保持默认
-
   ;; (setq desktop-buffers-not-to-save) ;; 暂时保持默认
 
   ;; 每 10 分钟自动保存一次
   (setq desktop-auto-save-timeout 600)
 
   ;; 退出时不询问直接保存
-  (setq desktop-save t)
-  (desktop-save-mode +1))
+  (setq desktop-save t))
+;; (desktop-save-mode +1))
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
-  :ensure t
+  ;; :ensure t
+  :ensure (easysession
+           :fetcher github
+           :repo "jamescherti/easysession.el"
+           :branch "develop"  ;; 👈 关键：指定使用 develop 分支
+           :files (:defaults "extensions/easysession*.el"))
+
   :demand t
-  :if (1043/enable-easysession-p)
+  ;; :if (1043/enable-easysession-p)
   :bind (:map global-map
               ("C-x w =" . easysession-switch-to)
               ;; 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
@@ -161,7 +166,13 @@
   (setq easysession-save-mode-predicate #'display-graphic-p)
 
   ;; 自动加载会话
-  (setq easysession-setup-load-session t)
+  ;; (setq easysession-setup-load-session t)
+  (setq easysession-setup-load-predicate #'(lambda()
+                                             (display-graphic-p)))
+  ;; (add-hook 'server-after-make-frame-hook
+  ;;         (lambda ()
+  ;;           (setq easysession-setup-load-session (display-graphic-p))))
+
   ;; 设置加载优先级
   (setq easysession-setup-add-hook-depth 102)
   ;; 为不同模式下启动的 Emacs 添加 hook
@@ -195,10 +206,6 @@
 
   ;; after-make-frame-functions 调用函数时，frame 已经创建但可能还没准备好，因此可能界面上的设置没有被更新
   ;; server-after-make-frame-hook 是在 frame 彻底准备好之后调用的函数
-
-  (if (boundp 'elpaca-after-init-hook)
-      (add-hook 'elpaca-after-init-hook #'gcmh-mode)
-    (add-hook 'after-init-hook #'gcmh-mode))
 
   (activities-mode +1)
   (activities-tabs-mode +1)

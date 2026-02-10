@@ -36,9 +36,9 @@
 (defun lou/enable-socks-proxy ()
   "启用 SOCKS 代理。"
   (interactive)
-  (setq socks-server (list "Default server" 
+  (setq socks-server (list "Default server"
                            lou/socks-proxy-url
-                           (string-to-number lou/socks-proxy-port) 
+                           (string-to-number lou/socks-proxy-port)
                            (string-to-number lou/socks-proxy-version)))
   (message "SOCKS 代理已启用: %s:%s" lou/socks-proxy-url lou/socks-proxy-port))
 
@@ -75,7 +75,7 @@
 (defun lou/switch-proxy-dwim ()
   (interactive)
   (cond
-   ((and (bound-and-true-p socks-server)       
+   ((and (bound-and-true-p socks-server)
          (bound-and-true-p url-proxy-services))
     (lou/disable-all-proxies))
    ((and (bound-and-true-p url-proxy-services)
@@ -114,8 +114,8 @@
   (let ((results ()))
     (dolist (url lou/check-url-latency)
       (let* ((start-time (float-time))
-             (response-buffer nil)    
-             (latency-ms nil)         
+             (response-buffer nil)
+             (latency-ms nil)
              (status "连接失败或超时"))
         (condition-case err
             (setq response-buffer (url-retrieve-synchronously url))
@@ -129,6 +129,36 @@
     (setq results (nreverse results))
     (message "网站延迟检测报告完成:\n%s\n----------------------------------"
              (string-join results "\n"))))
+
+
+;; Close frame or emacs
+(defun lou/frame-shares-client-p ()
+  "判断当前 frame 是否与其他 frame 共享同一个 client。"
+  (interactive)
+  (let* ((current-frame (selected-frame))              ; 获取当前 frame
+         (current-client (frame-parameter current-frame 'client))  ; 获取当前 frame 的 client
+         (all-frames (frame-list))                     ; 获取所有 frame 的列表
+         (other-frames (delq current-frame all-frames))) ; 去掉当前 frame，得到"其他 frame"
+    ;; 如果当前 frame 没有 client，直接返回 nil
+    (if (not current-client)
+        nil
+      ;; 否则，检查其他 frame 中是否有与当前 client 相同的
+      (catch 'found
+        (dolist (frame other-frames)
+          (when (eq (frame-parameter frame 'client) current-client)
+            ;; 找到了！返回 t 并立即退出
+            (throw 'found t)))
+        ;; 如果循环结束都没有找到，返回 nil
+        nil))))
+
+(defun lou/save-buffers-kill-terminal ()
+  "在 daemon 模式下，更加智能的关闭 frame."
+  (interactive)
+  (if (or (daemonp) (server-running-p))
+      (if (1043/frame-shares-client-p)
+          (delete-frame)
+        (save-buffers-kill-terminal))
+    (save-buffers-kill-terminal)))
 
 ;; File Encoding Conversion
 ;; 遇到更难顶的编码就用 unicad 试试吧
