@@ -103,10 +103,10 @@
 
   ;; 每 10 分钟自动保存一次
   (setq desktop-auto-save-timeout 600)
+  ;; (desktop-save-mode +1))
 
   ;; 退出时不询问直接保存
   (setq desktop-save t))
-;; (desktop-save-mode +1))
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
   :ensure t
@@ -162,12 +162,14 @@
   (setq easysession-save-interval 600)
   ;; 切换 session 前保存当前 session
   (setq easysession-switch-to-save-session t)
-  
+
   ;; 仅在 GUI 下 使用 easysession 保存，也仅保存 GUI frame
   (setq easysession-save-mode-predicate #'display-graphic-p)
 
   ;; 仅在 GUI 下自动加载会话
   (setq easysession-setup-load-predicate #'display-graphic-p)
+  ;; (setq easysession-setup-load-predicate #'(lambda()
+  ;;                                            (display-graphic-p)))
 
   ;; 设置加载优先级
   (setq easysession-setup-add-hook-depth 102)

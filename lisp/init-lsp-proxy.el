@@ -44,7 +44,7 @@
           ("typescript-ts" . "typescript")))
 
   ;; 日志信息记录等级
-  (setq lsp-proxy-log-level 0)
+  (setq lsp-proxy-log-level 2)
   ;; 选择提供诊断信息的包
   (setq lsp-proxy-diagnostics-provider :auto))
 

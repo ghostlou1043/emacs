@@ -43,8 +43,16 @@
 
 (use-package treesit-langs
   :ensure (:host github :repo "emacs-tree-sitter/treesit-langs")
+  :demand t
   :config
-  (treesit-langs-major-mode-setup))
+  (add-hook 'find-file-hook #'treesit-langs-major-mode-setup)) ;; 暂时使用该 hook , 后续根据语言细化
+
+;; (use-package treesit-auto
+;;   :ensure t
+;;   :config
+;;   (setq treesit-auto-install 'prompt)
+;;   (treesit-auto-add-to-auto-mode-alist 'all)
+;;   (global-treesit-auto-mode +1))
 
 (use-package kdl-mode
   :ensure t
@@ -72,19 +80,13 @@
   :ensure nil
   :bind
   (:map emacs-lisp-mode-map
-	("C-c C-f" . nil) ;; elisp-byte-compile-file
-	("C-c C-e" . nil))) ;; elisp-eval-region-or-buffer
+	    ("C-c C-f" . nil) ;; elisp-byte-compile-file
+	    ("C-c C-e" . nil))) ;; elisp-eval-region-or-buffer
 
 (use-package markdown-mode
   :ensure t)
 
 
-(use-package treesit-auto
-  :ensure t
-  :config
-  (setq treesit-auto-install 'prompt)
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode +1))
 
 ;; (use-package eglot
 ;;   :ensure (:type built-in)
