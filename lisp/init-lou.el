@@ -155,7 +155,7 @@
   "在 daemon 模式下，更加智能的关闭 frame."
   (interactive)
   (if (or (daemonp) (server-running-p))
-      (if (1043/frame-shares-client-p)
+      (if (lou/frame-shares-client-p)
           (delete-frame)
         (save-buffers-kill-terminal))
     (save-buffers-kill-terminal)))
