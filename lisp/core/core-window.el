@@ -81,7 +81,7 @@
 
 (use-package desktop
   :ensure nil
-  ;; :if (1043/enable-desktop-p)
+  :if (1043/enable-desktop-p)
   :init
   ;; 启动时，只立即恢复前 5 个 buffer 的内容。
   (setq desktop-restore-eager 5)
@@ -109,15 +109,15 @@
 ;; (desktop-save-mode +1))
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
-  ;; :ensure t
-  :ensure (easysession
-           :fetcher github
-           :repo "jamescherti/easysession.el"
-           :branch "develop"  ;; 👈 关键：指定使用 develop 分支
-           :files (:defaults "extensions/easysession*.el"))
+  :ensure t
+  ;; :ensure (easysession
+  ;;          :fetcher github
+  ;;          :repo "jamescherti/easysession.el"
+  ;;          :branch "develop"  ;; 👈 关键：指定使用 develop 分支
+  ;;          :files (:defaults "extensions/easysession*.el"))
 
   :demand t
-  ;; :if (1043/enable-easysession-p)
+  :if (1043/enable-easysession-p)
   :bind (:map global-map
               ("C-x w =" . easysession-switch-to)
               ;; 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
@@ -162,16 +162,12 @@
   (setq easysession-save-interval 600)
   ;; 切换 session 前保存当前 session
   (setq easysession-switch-to-save-session t)
+  
   ;; 仅在 GUI 下 使用 easysession 保存，也仅保存 GUI frame
   (setq easysession-save-mode-predicate #'display-graphic-p)
 
-  ;; 自动加载会话
-  ;; (setq easysession-setup-load-session t)
-  (setq easysession-setup-load-predicate #'(lambda()
-                                             (display-graphic-p)))
-  ;; (add-hook 'server-after-make-frame-hook
-  ;;         (lambda ()
-  ;;           (setq easysession-setup-load-session (display-graphic-p))))
+  ;; 仅在 GUI 下自动加载会话
+  (setq easysession-setup-load-predicate #'display-graphic-p)
 
   ;; 设置加载优先级
   (setq easysession-setup-add-hook-depth 102)
