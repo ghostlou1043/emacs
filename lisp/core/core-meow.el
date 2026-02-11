@@ -150,6 +150,7 @@
           (helpful-mode . insert)
           (calendar-mode . insert)
           (calfw-calendar-mode . insert)
+          (wallabag-search-mode . insert)
 
           (prog-mode . normal)
           (text-mode . normal)))
