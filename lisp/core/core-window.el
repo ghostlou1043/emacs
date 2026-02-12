@@ -48,7 +48,6 @@
 
   (setq tab-bar-tab-hints t)              ;; 显示 tab 序号，由于自定义该选项无效果
   (setq tab-bar-separator "")
-  (setq tab-bar-new-tab-choice "*scratch*")
 
   ;; 截断长名
   (setq tab-bar-tab-name-truncated-max 20)
@@ -180,27 +179,31 @@
   :ensure t
   :after tab-bar
   :init
-  (defun 1043/rename-initial-scratch-tab ()
-    "重命名当前 frame 的 *scratch* tab 为 Misc。"
+  (defun 1043/rename-initial-tab ()
+    "重命名初始 tab 为 Misc（支持多个默认名称）。"
     (when (bound-and-true-p tab-bar-mode)
       (let ((tabs (tab-bar-tabs)))
-        (when (and (= (length tabs) 1)
-                   (string= (alist-get 'name (car tabs)) "*scratch*"))
-          (tab-bar-rename-tab "Misc")))))
+        (when (= (length tabs) 1)
+          (let ((tab-name (alist-get 'name (car tabs)))
+                ;; 定义要重命名的 tab 名字列表
+                (target-names '("*scratch*" "*dashboard*")))
+            ;; 如果当前名字在列表里，就重命名
+            (when (member tab-name target-names)
+              (tab-bar-rename-tab "Misc")))))))
 
   ;; daemon 下创建新 frame 重命名 (包括第一个 frame)
   ;; server 下创建新 frame 重命名 (不包括第一个 frame)
-  (add-hook 'server-after-make-frame-hook #'1043/rename-initial-scratch-tab)
+  (add-hook 'server-after-make-frame-hook #'1043/rename-initial-tab)
 
   ;; 为 server 和 非 daemon 和 server 模式下的初始 frame 重命名
   (unless (daemonp)
-    (add-hook 'window-setup-hook #'1043/rename-initial-scratch-tab)
+    (add-hook 'window-setup-hook #'1043/rename-initial-tab)
     ;; 为非 daemon 和 server 模式下的 frame 重命名
     (unless (server-running-p)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame
-                    (1043/rename-initial-scratch-tab))))))
+                    (1043/rename-initial-tab))))))
 
   ;; after-make-frame-functions 调用函数时，frame 已经创建但可能还没准备好，因此可能界面上的设置没有被更新
   ;; server-after-make-frame-hook 是在 frame 彻底准备好之后调用的函数

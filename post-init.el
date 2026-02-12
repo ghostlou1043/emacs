@@ -71,6 +71,9 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; 选择主题
 (setq 1043/themes 'modus-themes)
 
+;; 选择项目管理插件
+(setq 1043/project-management 'projectile)
+
 ;; Load built-in features and core configuration.
 (require 'init-core)
 (require 'init-corfu)

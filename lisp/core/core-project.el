@@ -4,6 +4,7 @@
 
 (use-package projectile
   :ensure t
+  :if (1043/enable-projectile-p)
   :bind-keymap ("C-x p" . projectile-command-map)
   :init
   (which-key-add-key-based-replacements "C-x p" "Projectile")
