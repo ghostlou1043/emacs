@@ -32,7 +32,8 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 
 
 ;; User Custom
-(load custom-file 'noerror 'no-message)
+(when (file-exists-p custom-file)
+  (load custom-file 'noerror 'no-message))
 
 ;; Personalized customization.
 (require 'init-1043)

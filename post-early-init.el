@@ -2,6 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
+(setq custom-file (expand-file-name "emacs-private/custom.el" user-emacs-directory))
 ;; (setq use-package-always-ensure nil)
 
 

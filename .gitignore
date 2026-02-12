@@ -46,3 +46,5 @@ custom.el
 /easysession/
 /wallabag-cache.el
 /url/
+/private/
+/emacs-private/
