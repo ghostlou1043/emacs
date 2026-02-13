@@ -96,14 +96,6 @@
   ;; (setq desktop-dirname (expand-file-name user-emacs-directory)) ;; 保持默认
   ;; (setq desktop-buffers-not-to-save) ;; 暂时保持默认
 
-  ;; 空闲 300 秒自动保存一次
-  ;; 手动保存时更新非 lock 存储文件，不更新 lock 文件
-  ;; kill-emacs 时不保存, daemon 下关闭 frame 也不触发保存
-  ;; (setq desktop-auto-save-timeout 300)
-
-  ;; 保留 desktop-save-mode 的自动保存以及关闭前保存的能力，但不自动恢复
-  ;; (add-hook 'emacs-startup-hook #'desktop-save-mode))
-
   ;; desktop-read 恢复布局，但不允许重载
   ;; 而 desktop-change-dir 在 desktop-save-mode 开启的情况下会先保存当前 .emacs.desktop 文件再加载指定目录的 .emacs.desktop
   ;; 故此需关闭 desktop-save-mode 再利用 desktop-change-dir 重载并恢复布局
@@ -115,7 +107,13 @@
       (apply original-function args)))
 
   (advice-add 'desktop-save :around #'lou/desktop-save-guard)
-  ;; 这个 advice 是为空闲时自动保存准备的，暂时未配置超时保存
+
+  (defun lou/desktop-change-dir-guard (original-function &rest args)
+    "在执行 desktop-change-dir 期间，强制禁止保存桌面。"
+    (let ((desktop-save nil))     
+      (apply original-function args)))
+
+  (advice-add 'desktop-change-dir :around #'lou/desktop-change-dir-guard)
 
   ;; 仅在 TUI 下恢复
   ;; 仅在 TUI 窗口(存在初始帧)为 1 时恢复
@@ -123,9 +121,15 @@
   (add-hook 'server-after-make-frame-hook #'lou/restore-session)
   
   ;; 仅在最后一个 TUI frame 被关闭时保存
-  (add-hook 'delete-frame-functions #'lou/desktop-save))
+  (add-hook 'delete-frame-functions #'lou/desktop-save)
 
+  ;; 空闲 300 秒自动保存一次
+  ;; 手动保存时更新非 lock 存储文件，不更新 lock 文件
+  ;; kill-emacs 时不保存, daemon 下关闭 frame 也不触发保存
+  (setq desktop-auto-save-timeout 300)
 
+  ;; 保留 desktop-save-mode 的超时保存能力，但不自动恢复，也不在切换前保存
+  (add-hook 'emacs-startup-hook #'desktop-save-mode))
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
   :ensure t
