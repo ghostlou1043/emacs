@@ -75,7 +75,7 @@
   ;; (setq life-calendar-current-char "●")
   ;; (setq life-calendar-future-char "○")
   ;; (setq life-calendar-chapter-char "★")
-  
+
   )
 
 (provide 'core-calfw)

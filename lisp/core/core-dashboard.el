@@ -6,11 +6,12 @@
   :ensure t
   :demand t
   :bind(:map dashboard-mode-map
-             ("T" . telega)
+             ("L" . lou/load-session)
              ("B" . butterfly)
+             ("T" . telega)
              ("E" . elfeed)
              ("M" . emms))
-  ;; dashboard-refresh-buffer
+
   :custom
   ;; 显示项图标
   (dashboard-set-heading-icons t)
@@ -92,7 +93,11 @@
             warning "[" "]")
            ("" "Butterfly" "Real world programming!"
             (lambda (&rest _) (butterfly))
-            warning "[" "]"))))
+            warning "[" "]")
+           ("" "Load" "Load session"
+            (lambda (&rest _) (lou/load-session))
+            warning "[" "]")
+           )))
 
   (setq dashboard-item-names '(("Recent Files:"               . "Recently opened files:")
                                ("Agenda for today:"           . "Today's agenda:")

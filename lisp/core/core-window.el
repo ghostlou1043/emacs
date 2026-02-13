@@ -66,46 +66,66 @@
              (propertize (number-to-string i) 'face number-face)
              (propertize (concat " " (alist-get 'name tab) " ") 'face face)))))
 
-
   (setq tab-bar-format '(tab-bar-format-tabs        ;; 标签页
                          tab-bar-format-align-right ;; 这是一个特殊的“占位符”，让后面的东西都跑到最右边
                          tab-bar-format-global      ;; 显示各种全局信息
                          )))
 
-;; 可能存在的问题：
-;; desktop 与 easysession 都存在被设定为自动加载时，
-;; 若没有已经打开的 frame 会导致临时的 frame 编辑框被用于恢复会话
-;; 不过疑似需要已经存在一个 frame 才能够让其他应用打开临时的 frame
-;; 即使是通过终端打开临时 TUI Emacs 似乎也不会对 easysession 造成影响，desktop 待测试
-
 (use-package desktop
   :ensure nil
+  :demand t
   :if (1043/enable-desktop-p)
-  :init
+  :custom
+  ;; 退出时不询问直接保存
+  (desktop-save t)
   ;; 启动时，只立即恢复前 5 个 buffer 的内容。
-  (setq desktop-restore-eager 5)
+  (desktop-restore-eager 5)
   ;; 当 emacs 在后台“懒加载”剩余文件时，不要在 minibuffer 显示烦人的消息
-  (setq desktop-lazy-verbose nil)
+  (desktop-lazy-verbose nil)
   ;; 保存并恢复布局
-  (setq desktop-restore-frames t)
+  (desktop-restore-frames t)
   ;; 允许加载被锁定的会话
-  ;; (setq desktop-load-locked-desktop 'check-pid)
-  ;; 直到窗口被创建才自动加载
-  ;; (if (daemonp)
-  ;;     (add-hook 'server-after-make-frame-hook #'desktop-read)
-  ;;   (add-hook 'emacs-startup-hook #'desktop-read))
+  ;; (desktop-load-locked-desktop 't)
+  (desktop-load-locked-desktop 'check-pid)
+
   :config
-  ;; 后续考虑实现区分 TUI 与 GUI 不同会话，是否需要启动不同的 daemon ?
-  ;; (setq desktop-dirname) ;; 保持默认
-  ;; (setq desktop-base-file-name) ;; 保持默认
+  ;; (desktop-save desktop-dirname)
+  ;; (desktop-change-dir desktop-dirname)
+  
+  ;; (setq desktop-base-file-name ".emacs.desktop") ;; 保持默认
+  ;; (setq desktop-dirname (expand-file-name user-emacs-directory)) ;; 保持默认
   ;; (setq desktop-buffers-not-to-save) ;; 暂时保持默认
 
-  ;; 每 10 分钟自动保存一次
-  (setq desktop-auto-save-timeout 600)
-  ;; (desktop-save-mode +1))
+  ;; 空闲 300 秒自动保存一次
+  ;; 手动保存时更新非 lock 存储文件，不更新 lock 文件
+  ;; kill-emacs 时不保存, daemon 下关闭 frame 也不触发保存
+  ;; (setq desktop-auto-save-timeout 300)
 
-  ;; 退出时不询问直接保存
-  (setq desktop-save t))
+  ;; 保留 desktop-save-mode 的自动保存以及关闭前保存的能力，但不自动恢复
+  ;; (add-hook 'emacs-startup-hook #'desktop-save-mode))
+
+  ;; desktop-read 恢复布局，但不允许重载
+  ;; 而 desktop-change-dir 在 desktop-save-mode 开启的情况下会先保存当前 .emacs.desktop 文件再加载指定目录的 .emacs.desktop
+  ;; 故此需关闭 desktop-save-mode 再利用 desktop-change-dir 重载并恢复布局
+
+  (defun lou/desktop-save-guard (original-function &rest args)
+    "只允许在 TUI 环境下保存 desktop，阻止 GUI 环境下的保存"
+    (if (display-graphic-p)
+        nil
+      (apply original-function args)))
+
+  (advice-add 'desktop-save :around #'lou/desktop-save-guard)
+  ;; 这个 advice 是为空闲时自动保存准备的，暂时未配置超时保存
+
+  ;; 仅在 TUI 下恢复
+  ;; 仅在 TUI 窗口(存在初始帧)为 1 时恢复
+  ;; 仅在打开 buffer 为 *scratch* 或 *dashboard* 时恢复
+  (add-hook 'server-after-make-frame-hook #'lou/restore-session)
+  
+  ;; 仅在最后一个 TUI frame 被关闭时保存
+  (add-hook 'delete-frame-functions #'lou/desktop-save))
+
+
 
 (use-package easysession ;; 说明：仅允许同时激活一个会话，会恢复多个 frame (包括 daemon 模式)与 frame 的布局以及所有 Buffer
   :ensure t
@@ -118,12 +138,13 @@
   :demand t
   :if (1043/enable-easysession-p)
   :bind (:map global-map
-              ("C-x w =" . easysession-switch-to)
               ;; 加载 Emacs 编辑会话，只恢复会话内容,不改变 frame 大小和位置, 适合切换 session 时使用
-              ("C-x w L" . easysession-load)
+              ("C-x w =" . easysession-switch-to)
+              ("C-x w L" . easysession-switch-to-and-restore-geometry)
               ("C-x w S" . easysession-save)
               ("C-x w C" . easysession-reset)
               ("C-x w R" . easysession-rename)
+              ("C-x w U" . easysession-unload)
               ("C-x w D" . easysession-delete))
 
   :config

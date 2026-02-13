@@ -130,6 +130,55 @@
     (message "网站延迟检测报告完成:\n%s\n----------------------------------"
              (string-join results "\n"))))
 
+;; 智能保存恢复 Buffer 与布局
+(defun lou/desktop-save (frame)
+  (interactive)
+  (when (and
+         desktop-dirname
+         (frame-live-p frame)
+         (= (length (seq-filter
+                     (lambda (frame)
+                       (and
+                        ;; 条件 1：排除 daemon 内部 frame
+                        (not (equal (terminal-name (frame-terminal frame))
+                                    "initial_terminal"))
+                        ;; 条件 2：只保留 TUI frame 的数量（排除 GUI frame）
+                        (not (display-graphic-p frame))))
+                     (frame-list))) 1))
+    (desktop-save desktop-dirname)))
+
+(defun lou/load-session ()
+  "Automatically restore session based on GUI or TUI.
+- In GUI (graphical Emacs): use easysession-switch-to-and-restore-geometry
+- In TUI (terminal Emacs): use desktop-read"
+  (interactive)
+  (if (display-graphic-p)
+      (when (fboundp 'easysession-switch-to-and-restore-geometry)
+        (call-interactively #'easysession-switch-to-and-restore-geometry))
+    (when (fboundp 'desktop-read)
+      (desktop-read))))
+
+(defun lou/restore-session ()
+  "在 daemon 模式下，根据 TUI frame 数量决定是否加载会话。
+如果 TUI frame 数量 < 2，则调用 lou/load-session。"
+  (interactive)
+  (if (daemonp)
+      (let* ((current-buf-name (buffer-name (current-buffer))))
+        (if (and desktop-dirname
+                 (= (length (seq-filter
+                             (lambda (frame)
+                               (and
+                                ;; 条件 1：排除 daemon 内部 frame
+                                (not (equal (terminal-name (frame-terminal frame))
+                                            "initial_terminal"))
+                                ;; 条件 2：只保留 TUI frame（排除 GUI frame）
+                                (not (display-graphic-p frame))))
+                             (frame-list))) 1)
+                 (or (string= current-buf-name "*scratch*")
+                     (string= current-buf-name "*dashboard*")))
+            (desktop-change-dir desktop-dirname)
+          (dashboard-open)))
+    (dashboard-open)))
 
 ;; Close frame or emacs
 (defun lou/frame-shares-client-p ()

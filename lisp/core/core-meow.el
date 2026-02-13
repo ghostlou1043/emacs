@@ -142,7 +142,9 @@
   (setq meow-expand-exclude-mode-list '(markdown-mode org-mode))
 
   (setq meow-mode-state-list
-        '((conf-mode . normal)
+        '((prog-mode . normal)
+          (text-mode . normal)
+          (conf-mode . normal)
           (fundamental-mode . normal)
 
           (help-mode . insert)
@@ -151,9 +153,7 @@
           (calendar-mode . insert)
           (calfw-calendar-mode . insert)
           (wallabag-search-mode . insert)
-
-          (prog-mode . normal)
-          (text-mode . normal)))
+          ))
 
   ;; (add-to-list 'meow-mode-state-list '((vundo-mode . insert)
   ;;                                      (fundamental-mode . motion)

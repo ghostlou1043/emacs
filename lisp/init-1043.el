@@ -31,16 +31,34 @@
       (message "已保存位置: %s 到 custom.el" user-input))))
 
 ;; 恢复 Buffer 与布局
-(defvar 1043/session-restore-backend 'easysession
-  "Backend for session restoration: 'easysession, 'desktop, or 'none.")
+(defvar 1043/session-restore-backend 'desktop
+  "Backend for session restoration.
+Available values:
+  - 'easysession : Only use easysession
+  - 'desktop     : Only use desktop.el
+  - 'both        : Use both (desktop.el in TUI, easysession in GUI)
+  - 'none        : Disable session restoration")
+
+(defun 1043/enable-restore-both-p ()
+  "Returns t if both is the selected session restore backend.
+Will be used desktop.el in TUI, easysession in GUI"
+  (eq 1043/session-restore-backend 'both))
 
 (defun 1043/enable-easysession-p ()
-  "Returns t if easysession is the selected session restore backend."
-  (eq 1043/session-restore-backend 'easysession))
+  "Returns t if easysession should be enabled.
+This includes:
+  - When backend is 'easysession
+  - When backend is 'both"
+  (or (eq 1043/session-restore-backend 'easysession)
+      (eq 1043/session-restore-backend 'both)))
 
 (defun 1043/enable-desktop-p ()
-  "Returns t if desktop is the selected session restore backend."
-  (eq 1043/session-restore-backend 'desktop))
+  "Returns t if desktop.el should be enabled.
+This includes:
+  - When backend is 'desktop
+  - When backend is 'both"
+  (or (eq 1043/session-restore-backend 'desktop)
+      (eq 1043/session-restore-backend 'both)))
 
 ;; 使用 tab-bar
 (defvar 1043/tab-bar t)
