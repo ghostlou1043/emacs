@@ -2,7 +2,17 @@
 ;;; Commentary:
 ;;; Code:
 
-(setq elpaca-core-date '(20260327))
+(defun 1043/nixosp ()
+  "Return t if operating system is NixOS, nil otherwise."
+  (file-exists-p "/etc/NIXOS"))
+
+(defun 1043/get-emacs-build-date ()
+  "Return NixOS Emacs build date."
+  (string-match "--prefix.*emacs.*\\([[:digit:]]\\{8\\}\\)" system-configuration-options)
+  (string-to-number (match-string 1 system-configuration-options)))
+
+;; Run this before the elpaca.el is loaded. Before the installer in your init.el is a good spot.
+(when (my/nixos-p) (setq elpaca-core-date (list (1043/get-emacs-build-date))))
 
 (defvar elpaca-installer-version 0.12)
 (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
@@ -72,7 +82,7 @@
 ;;       (goto-char (point-max))
 ;;       (eval-print-last-sexp)))
 ;;   (load bootstrap-file nil 'nomessage))
-;; 
+;;
 ;; (straight-use-package 'use-package)
 
 ;; Local variables:
