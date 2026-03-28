@@ -77,7 +77,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 ;; Load built-in features and core configuration.
 (require 'init-core)
 (require 'init-corfu)
-(require 'init-lsp-bridge)
+;; (require 'init-lsp-bridge)
 (require 'init-lsp-proxy)
 (require 'init-apheleia)
 (require 'init-flycheck)

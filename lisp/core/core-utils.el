@@ -47,8 +47,8 @@
   ;; default nil
   (setq daemons-always-sudo t))
 
-(use-package tldr
-  :ensure t)
+;; (use-package tldr
+;;   :ensure t)
 
 ;; need mplayer
 (use-package nyan-mode

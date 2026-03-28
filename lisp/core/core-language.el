@@ -71,22 +71,20 @@
   :ensure t
   :mode "\\.nix\\'")
 
-(use-package cmake-mode
-  :ensure t
-  :mode (("CMakeLists\\.txt$" . cmake-mode)
-         ("\\.cmake$'" . cmake-mode)))
+;; (use-package cmake-mode
+;;   :ensure t
+;;   :mode (("CMakeLists\\.txt$" . cmake-mode)
+;;          ("\\.cmake$'" . cmake-mode)))
 
 (use-package elisp-mode
   :ensure nil
   :bind
   (:map emacs-lisp-mode-map
-	    ("C-c C-f" . nil) ;; elisp-byte-compile-file
+	    ("C-c C-f" . nil) ;; elisp-byte-compile-file 
 	    ("C-c C-e" . nil))) ;; elisp-eval-region-or-buffer
 
 (use-package markdown-mode
   :ensure t)
-
-
 
 ;; (use-package eglot
 ;;   :ensure (:type built-in)

@@ -50,33 +50,33 @@
   (with-eval-after-load 'meow
     (add-hook 'calfw-calendar-mode-hook  #'meow-insert-mode)))
 
-(use-package life-calendar
-  :ensure t
-  :config
-  ;; Your birthday (set automatically on first use, or set manually).
-  ;; (setq life-calendar-birthday "1990-05-15")
-
-  ;; Number of years to display (default: 90).
-  (setq life-calendar-years 100)
-
-  ;; When to count a new week (default: 'birthday).
-  ;; 'birthday = day of week you were born (each week starts on that day)
-  ;; Or use a day symbol: 'sunday, 'monday, 'tuesday, etc.
-  (setq life-calendar-week-start-day 'sunday)
-
-  ;; Number of columns to display (default: nil).
-  ;; nil = auto-fit as many columns as the window allows
-  ;; Or set to a specific number for fixed columns.
-  (setq life-calendar-columns nil)   ; auto-fit to window
-  ;; (setq life-calendar-columns 2)     ; always show 2 columns
-
-  ;; Characters for different week states.
-  ;; (setq life-calendar-past-char "●")
-  ;; (setq life-calendar-current-char "●")
-  ;; (setq life-calendar-future-char "○")
-  ;; (setq life-calendar-chapter-char "★")
-
-  )
+;; (use-package life-calendar
+;;   :ensure t
+;;   :config
+;;   ;; Your birthday (set automatically on first use, or set manually).
+;;   ;; (setq life-calendar-birthday "1990-05-15")
+;; 
+;;   ;; Number of years to display (default: 90).
+;;   (setq life-calendar-years 100)
+;; 
+;;   ;; When to count a new week (default: 'birthday).
+;;   ;; 'birthday = day of week you were born (each week starts on that day)
+;;   ;; Or use a day symbol: 'sunday, 'monday, 'tuesday, etc.
+;;   (setq life-calendar-week-start-day 'sunday)
+;; 
+;;   ;; Number of columns to display (default: nil).
+;;   ;; nil = auto-fit as many columns as the window allows
+;;   ;; Or set to a specific number for fixed columns.
+;;   (setq life-calendar-columns nil)   ; auto-fit to window
+;;   ;; (setq life-calendar-columns 2)     ; always show 2 columns
+;; 
+;;   ;; Characters for different week states.
+;;   ;; (setq life-calendar-past-char "●")
+;;   ;; (setq life-calendar-current-char "●")
+;;   ;; (setq life-calendar-future-char "○")
+;;   ;; (setq life-calendar-chapter-char "★")
+;; 
+;;   )
 
 (provide 'core-calfw)
 
