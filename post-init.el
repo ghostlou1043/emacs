@@ -41,7 +41,7 @@ If DIRS is omitted (nil), it defaults to '(\"lisp\" \"os-lisp\" \"site-lisp\")."
 (require 'init-ghost)
 
 ;; 选择恢复 Buffer 与布局的后端
-(setq 1043/session-restore-backend 'both)
+(setq 1043/session-restore-backend 'easysession)
 
 ;; 是否使用 tab-bar
 (setq 1043/tab-bar t)
