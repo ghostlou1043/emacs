@@ -44,7 +44,7 @@
   (setq magit-gptcommit-llm-provider (make-llm-openai-compatible
                                       :url "https://back.zaiwenai.com/api/v1/ai/"
                                       ;; :chat-model "Gemini-3.0-Flash"
-                                      :chat-model "Claude-Sonnet-4.5"
+                                      :chat-model "gpt_o4_mini"
                                       :key (plist-get (car (auth-source-search :host "back.zaiwenai.com")) :secret)))
 
   ;; (setq magit-gptcommit-prompt )
